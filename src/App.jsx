@@ -38,6 +38,8 @@ import Student from "./pages/Student/Student";
 import Mentor from "./pages/Mentor/Mentor";
 import SingleGallery from "./pages/SingleGallery/SingleGallery";
 import SingleCourse from "./pages/SingleCourse/SingleCourse";
+import Float from "./components/Float/Float";
+import SocialFloat from "./components/Float/SocialFloat";
 function App() {
   const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -69,9 +71,12 @@ function App() {
   return (
     <div className="app">
       <QueryClientProvider client={queryClient}>
+             <Float />
+             <SocialFloat />
         <BrowserRouter>
           <Toaster position="top-center" richColors />
-          <ScrollToTop />
+          {/* <ScrollToTop /> */}
+     
           <Navbar />
           <Routes>
             <Route path="/" element={<Homepage />} />

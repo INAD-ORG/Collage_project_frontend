@@ -7,6 +7,9 @@ import useFullUrl from "../../utils/useFullUrl";
 import SEO from "../../components/SEO/SEO";
 
 import ScrollImage from "../../components/ScrollImage/ScrollImage";
+import Story from "../../components/Story/Story";
+import EnquiryBanner from "../../components/EnquiryBanner/EnquiryBanner";
+import Mentors from "../../components/Mentors/Mentors";
 
 const Homepage = () => {
   const fullUrl = useFullUrl();
@@ -23,8 +26,10 @@ const Homepage = () => {
       <HomeBanner />
       <HomeContent />
       <OurPrograms />
-      <ScrollImage/>
-      
+      <ScrollImage />
+      <EnquiryBanner />
+      <Story />
+      <Mentors />
       <ChooseUs />
     </div>
   );
