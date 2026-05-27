@@ -1,5 +1,7 @@
 import { FiUsers, FiAward, FiMapPin, FiStar } from "react-icons/fi";
 
+import aboutImage from "../../assets/images/mainImg/about1.webp";
+
 const HomeContent = () => {
   return (
     <div className="relative bg-white py-16 sm:py-20 lg:py-28 overflow-hidden">
@@ -37,7 +39,7 @@ const HomeContent = () => {
               {/* Main Image Container */}
               <div className="relative w-full h-full border-2 border-black overflow-hidden group">
                 <img
-                  src="https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  src={aboutImage}
                   alt="Design Student"
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                 />

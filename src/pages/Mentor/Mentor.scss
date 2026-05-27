@@ -69,7 +69,9 @@
       .staff-card {
         box-sizing: border-box;
         justify-content: space-between;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
         cursor: pointer;
         position: relative;
 

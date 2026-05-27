@@ -131,7 +131,7 @@ const Mentor = () => {
           <div className="absolute inset-0 flex items-center">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
               <div className="max-w-3xl">
-                 {/* Badge */}
+                {/* Badge */}
                 <div className="flex items-center gap-3 mb-6 animate-fadeIn">
                   <span className="px-4 py-1.5 bg-yellow-400/10 backdrop-blur-sm border border-yellow-400/30 text-yellow-400 text-xs font-medium uppercase tracking-wider">
                     Our Mentors
@@ -157,7 +157,7 @@ const Mentor = () => {
                   </Link>
 
                   <Link
-                    to="/contact"
+                    to="/contact-us"
                     className="group relative px-7 py-3.5 border border-white/30 text-white font-medium text-sm flex items-center gap-2 hover:border-yellow-400 hover:text-yellow-400 transition-all duration-300"
                   >
                     Get in Touch
@@ -431,7 +431,7 @@ const Mentor = () => {
               <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              to="/contact"
+              to="/contact-us"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white/30 text-white font-semibold text-sm hover:bg-white hover:text-black hover:border-white transition-all duration-300 group"
             >
               Contact Us

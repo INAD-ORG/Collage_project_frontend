@@ -71,12 +71,12 @@ function App() {
   return (
     <div className="app">
       <QueryClientProvider client={queryClient}>
-             <Float />
-             <SocialFloat />
+        <Float />
+        <SocialFloat />
         <BrowserRouter>
           <Toaster position="top-center" richColors />
-          {/* <ScrollToTop /> */}
-     
+          <ScrollToTop />
+
           <Navbar />
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -86,8 +86,8 @@ function App() {
             <Route path="/our-staff" element={<Staff />} />
             <Route path="/mentor" element={<Mentor />} />
             <Route path="/alumni" element={<Placement />} />
-            <Route path="/enquiry" element={<Enquiry />} />
-            <Route path="/admission" element={<Admission />} />
+            <Route path="/admission" element={<Enquiry />} />
+            {/* <Route path="/admission" element={<Admission />} /> */}
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/student-corner" element={<Student />} />
             <Route path="/gallery/:id" element={<SingleGallery />} />

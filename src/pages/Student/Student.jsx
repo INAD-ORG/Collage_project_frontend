@@ -30,7 +30,7 @@ const Student = () => {
     try {
       const { data } = await axios.get(
         `${baseUrl}/certificate/${enrollmentId}`,
-        { responseType: "blob" }
+        { responseType: "blob" },
       );
 
       const imageUrl = URL.createObjectURL(data);
@@ -101,7 +101,7 @@ const Student = () => {
 
         {certificateUrl && (
           <div className="certificate-preview">
-            <img src={certificateUrl} alt="Certificate" loading="lazy"  />
+            <img src={certificateUrl} alt="Certificate" loading="lazy" />
             <span className="close-btn" onClick={closePreview}>
               ×
             </span>

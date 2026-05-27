@@ -122,6 +122,3 @@ export const fashionDesignCourses = [
   "Professional in Fashion CAD – 1 year",
   "Certificate in Dress Making – 6 months",
 ];
-
-
- 

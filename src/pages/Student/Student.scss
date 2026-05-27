@@ -151,8 +151,8 @@
         padding: 5px 10px;
         border-radius: 5px;
         border: 1px solid #585858;
-        
-        @include sm{
+
+        @include sm {
           width: 100%;
         }
 
@@ -175,7 +175,6 @@
           font-size: 16px;
           padding: 10px;
           margin-top: 10px;
-          
         }
 
         &:disabled {

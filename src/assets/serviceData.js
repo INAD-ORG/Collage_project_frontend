@@ -7,8 +7,6 @@ export const interior = {
     "Come and see how dreams come true at InterNational Academy Of Design School of Creative Studies. Develop your interior design skills while embarking on a unique and captivating journey.",
   ],
 
- 
-
   list: {
     title: "Who Can Apply?",
     desc: "The criteria for InterNational Academy Of Design's interior design programs are flexible, and the institution welcomes students who are enthusiastic about the subject. To participate in the programs, you must meet the following requirements:",

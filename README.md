@@ -49,10 +49,10 @@ It also includes modules for certificate and marksheet generation, form automati
 
 ## 📁 Repositories
 
-| Repo        | Description                         |
-|-------------|-------------------------------------|
-| [Frontend](https://github.com/riteshgharti333/Collage_project_frontend) | Public site (React.js + Sass) |
-| [Backend](https://github.com/riteshgharti333/Collage_project_backend)   | API and logic (Express + MongoDB) |
+| Repo                                                                    | Description                          |
+| ----------------------------------------------------------------------- | ------------------------------------ |
+| [Frontend](https://github.com/riteshgharti333/Collage_project_frontend) | Public site (React.js + Sass)        |
+| [Backend](https://github.com/riteshgharti333/Collage_project_backend)   | API and logic (Express + MongoDB)    |
 | [Admin Panel](https://github.com/riteshgharti333/Collage-project-admin) | Admin dashboard (React + Cloudinary) |
 
 ---

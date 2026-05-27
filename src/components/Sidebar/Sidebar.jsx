@@ -3,15 +3,32 @@ import axios from "axios";
 import { baseUrl } from "../../main";
 import { toast } from "sonner";
 import { states } from "../../assets/state";
-import { FiSend, FiUser, FiMail, FiPhone, FiBriefcase, FiBookOpen, FiMapPin, FiMessageSquare, FiChevronDown } from "react-icons/fi";
+import {
+  FiSend,
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiBriefcase,
+  FiBookOpen,
+  FiMapPin,
+  FiMessageSquare,
+  FiChevronDown,
+} from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
 
 const Enquiry = () => {
   const wordLimit = 100;
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "", email: "", phoneNumber: "", profile: "", selectCourse: "",
-    selectState: "", district: "", city: "", message: "",
+    name: "",
+    email: "",
+    phoneNumber: "",
+    profile: "",
+    selectCourse: "",
+    selectState: "",
+    district: "",
+    city: "",
+    message: "",
   });
 
   const handleChange = (e) => {
@@ -25,17 +42,50 @@ const Enquiry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, phoneNumber, profile, selectCourse, selectState, district, city, message } = formData;
-    if (!name || !email || !phoneNumber || !profile || !selectCourse || !selectState || !district || !city || !message) {
+    const {
+      name,
+      email,
+      phoneNumber,
+      profile,
+      selectCourse,
+      selectState,
+      district,
+      city,
+      message,
+    } = formData;
+    if (
+      !name ||
+      !email ||
+      !phoneNumber ||
+      !profile ||
+      !selectCourse ||
+      !selectState ||
+      !district ||
+      !city ||
+      !message
+    ) {
       toast.error("All fields are required!");
       return;
     }
     try {
       setLoading(true);
-      const { data } = await axios.post(`${baseUrl}/enquiry/new-enquiry`, formData);
+      const { data } = await axios.post(
+        `${baseUrl}/enquiry/new-enquiry`,
+        formData,
+      );
       if (data.result === 1) {
         toast.success(data.message);
-        setFormData({ name: "", email: "", phoneNumber: "", profile: "", selectCourse: "", selectState: "", district: "", city: "", message: "" });
+        setFormData({
+          name: "",
+          email: "",
+          phoneNumber: "",
+          profile: "",
+          selectCourse: "",
+          selectState: "",
+          district: "",
+          city: "",
+          message: "",
+        });
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong!");
@@ -45,9 +95,16 @@ const Enquiry = () => {
   };
 
   const courses = [
-    "B.Sc. Fashion Design", "B.Sc. Interior Design", "B.Arch", "B.Sc. Animation",
-    "MBA Design Management", "M.Sc. Fashion Design", "M.Sc. Interior Design",
-    "Diploma in Fashion Design", "Diploma in Interior Design", "Certificate in Graphic Design"
+    "B.Sc. Fashion Design",
+    "B.Sc. Interior Design",
+    "B.Arch",
+    "B.Sc. Animation",
+    "MBA Design Management",
+    "M.Sc. Fashion Design",
+    "M.Sc. Interior Design",
+    "Diploma in Fashion Design",
+    "Diploma in Interior Design",
+    "Certificate in Graphic Design",
   ];
 
   const profiles = ["10+2", "Under Graduate", "Post Graduate", "Others"];
@@ -58,10 +115,14 @@ const Enquiry = () => {
       <div className="relative bg-gradient-to-r from-yellow-400/10 via-transparent to-transparent p-5 border-b border-white/10">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-6 h-px bg-yellow-400/60" />
-          <span className="text-yellow-400/70 text-[10px] font-medium uppercase tracking-[0.2em]">Apply Now</span>
+          <span className="text-yellow-400/70 text-[10px] font-medium uppercase tracking-[0.2em]">
+            Apply Now
+          </span>
         </div>
         <h3 className="text-white text-xl font-bold">Request Information</h3>
-        <p className="text-white/40 text-xs mt-1">Fill the form to get course details</p>
+        <p className="text-white/40 text-xs mt-1">
+          Fill the form to get course details
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="p-5 space-y-4">
@@ -126,9 +187,13 @@ const Enquiry = () => {
               required
               className="w-full bg-transparent border-b border-white/20 py-2 text-white text-sm focus:border-yellow-400 outline-none transition-colors appearance-none cursor-pointer"
             >
-              <option value="" className="bg-black">Select Qualification</option>
+              <option value="" className="bg-black">
+                Select Qualification
+              </option>
               {profiles.map((item, index) => (
-                <option key={index} value={item} className="bg-black">{item}</option>
+                <option key={index} value={item} className="bg-black">
+                  {item}
+                </option>
               ))}
             </select>
             <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-white/40 text-sm" />
@@ -148,9 +213,13 @@ const Enquiry = () => {
               required
               className="w-full bg-transparent border-b border-white/20 py-2 text-white text-sm focus:border-yellow-400 outline-none transition-colors appearance-none cursor-pointer"
             >
-              <option value="" className="bg-black">Select Course</option>
+              <option value="" className="bg-black">
+                Select Course
+              </option>
               {courses.map((item, index) => (
-                <option key={index} value={item} className="bg-black">{item}</option>
+                <option key={index} value={item} className="bg-black">
+                  {item}
+                </option>
               ))}
             </select>
             <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-white/40 text-sm" />
@@ -170,10 +239,16 @@ const Enquiry = () => {
               required
               className="w-full bg-transparent border-b border-white/20 py-2 text-white text-sm focus:border-yellow-400 outline-none transition-colors appearance-none cursor-pointer"
             >
-              <option value="" className="bg-black">Select State</option>
-              {states.sort((a, b) => a.state.localeCompare(b.state)).map((item, index) => (
-                <option key={index} value={item.state} className="bg-black">{item.state}</option>
-              ))}
+              <option value="" className="bg-black">
+                Select State
+              </option>
+              {states
+                .sort((a, b) => a.state.localeCompare(b.state))
+                .map((item, index) => (
+                  <option key={index} value={item.state} className="bg-black">
+                    {item.state}
+                  </option>
+                ))}
             </select>
             <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-white/40 text-sm" />
           </div>
@@ -193,10 +268,16 @@ const Enquiry = () => {
               disabled={!formData.selectState}
               className="w-full bg-transparent border-b border-white/20 py-2 text-white text-sm focus:border-yellow-400 outline-none transition-colors appearance-none cursor-pointer disabled:opacity-50"
             >
-              <option value="" className="bg-black">Select District</option>
-              {states.find((item) => item.state === formData.selectState)?.districts.map((district, idx) => (
-                <option key={idx} value={district} className="bg-black">{district}</option>
-              ))}
+              <option value="" className="bg-black">
+                Select District
+              </option>
+              {states
+                .find((item) => item.state === formData.selectState)
+                ?.districts.map((district, idx) => (
+                  <option key={idx} value={district} className="bg-black">
+                    {district}
+                  </option>
+                ))}
             </select>
             <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-white/40 text-sm" />
           </div>
@@ -242,9 +323,15 @@ const Enquiry = () => {
         >
           <span className="relative z-10 flex items-center gap-2">
             {loading ? (
-              <><div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Sending...</>
+              <>
+                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />{" "}
+                Sending...
+              </>
             ) : (
-              <><FiSend size={14} /> Submit Enquiry <MdArrowForward className="group-hover:translate-x-1 transition-transform" /></>
+              <>
+                <FiSend size={14} /> Submit Enquiry{" "}
+                <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
+              </>
             )}
           </span>
           <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-all duration-700" />
@@ -253,7 +340,9 @@ const Enquiry = () => {
 
       {/* Footer Note */}
       <div className="p-4 border-t border-white/10 text-center">
-        <p className="text-white/20 text-[9px] uppercase tracking-wider">We'll get back to you within 24 hours</p>
+        <p className="text-white/20 text-[9px] uppercase tracking-wider">
+          We'll get back to you within 24 hours
+        </p>
       </div>
     </div>
   );

@@ -3,7 +3,14 @@ import axios from "axios";
 import { baseUrl } from "../../main";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "../../components/Loader/Loader";
-import { FaBuilding, FaUserTie, FaBriefcase, FaTrophy, FaUsers, FaArrowRight } from "react-icons/fa";
+import {
+  FaBuilding,
+  FaUserTie,
+  FaBriefcase,
+  FaTrophy,
+  FaUsers,
+  FaArrowRight,
+} from "react-icons/fa";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FiMapPin, FiStar, FiAward } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
@@ -25,7 +32,7 @@ const fetchBanner = async () => {
     throw new Error("NETWORK_ERROR");
   }
   const { data } = await axios.get(
-    `${baseUrl}/banner/alumni-banner/67e7726c768539d1e124549e`
+    `${baseUrl}/banner/alumni-banner/67e7726c768539d1e124549e`,
   );
   return data?.image;
 };
@@ -75,7 +82,9 @@ const Placement = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <h3 className="text-white text-xl mb-2">Failed to load alumni data.</h3>
+          <h3 className="text-white text-xl mb-2">
+            Failed to load alumni data.
+          </h3>
           <p className="text-white/40">
             Try refreshing the page or check your connection.
           </p>
@@ -86,7 +95,11 @@ const Placement = () => {
 
   // Stats data
   const statsData = [
-    { icon: <FaUsers />, label: "Alumni Network", value: data?.length || "5000+" },
+    {
+      icon: <FaUsers />,
+      label: "Alumni Network",
+      value: data?.length || "5000+",
+    },
     { icon: <FaTrophy />, label: "Placement Rate", value: "100%" },
     { icon: <FaBriefcase />, label: "Partner Companies", value: "200+" },
     { icon: <FiStar />, label: "Success Stories", value: "1000+" },
@@ -135,8 +148,6 @@ const Placement = () => {
                   Our <span className="text-yellow-400">Alumni</span>
                 </h1>
 
-               
-
                 {/* Stats */}
                 <div className="flex flex-wrap gap-6 mt-8 animate-fadeInUp animation-delay-400">
                   {statsData.map((stat, i) => (
@@ -163,7 +174,6 @@ const Placement = () => {
 
       {/* Alumni Grid Section */}
       <div className="relative bg-black py-16 sm:py-20 lg:py-28 overflow-hidden">
-        
         {/* Abstract Background */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] border-[30px] border-white/[0.02] rotate-45" />
@@ -196,7 +206,6 @@ const Placement = () => {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -207,10 +216,12 @@ const Placement = () => {
               <span className="w-6 sm:w-8 h-px bg-yellow-400/40"></span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-tight">
-              Meet Our <span className="text-yellow-400 font-medium">Achievers</span>
+              Meet Our{" "}
+              <span className="text-yellow-400 font-medium">Achievers</span>
             </h2>
             <p className="text-white/40 mt-4 max-w-2xl mx-auto">
-              Our alumni are placed at top companies worldwide, making their mark in the design industry
+              Our alumni are placed at top companies worldwide, making their
+              mark in the design industry
             </p>
           </div>
 
@@ -306,7 +317,7 @@ const Placement = () => {
 
                     {/* Location */}
                     <div className="flex items-start gap-2 mb-3">
-                      <FaMapMarkerAlt  className="text-yellow-400/60 text-xs mt-0.5 flex-shrink-0" />
+                      <FaMapMarkerAlt className="text-yellow-400/60 text-xs mt-0.5 flex-shrink-0" />
                       <p className="text-white/50 text-xs leading-relaxed group-hover:text-white/70 transition-colors">
                         {item.location || "Global"}
                       </p>
@@ -326,7 +337,9 @@ const Placement = () => {
                       </span>
                       <div className="flex items-center gap-1">
                         <FiAward className="text-yellow-400/40 text-[10px]" />
-                        <span className="text-yellow-400/40 text-[8px]">Placed</span>
+                        <span className="text-yellow-400/40 text-[8px]">
+                          Placed
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -357,7 +370,9 @@ const Placement = () => {
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light text-white">
               What Makes Our{" "}
-              <span className="text-yellow-400 font-medium">Alumni Successful</span>
+              <span className="text-yellow-400 font-medium">
+                Alumni Successful
+              </span>
             </h2>
           </div>
 
@@ -425,8 +440,8 @@ const Placement = () => {
             <span className="text-yellow-400 font-medium">Success Story</span>
           </h2>
           <p className="text-white/40 max-w-2xl mx-auto mb-8">
-            Start your journey at INAD and join our growing family of successful alumni.
-            Limited seats available for the upcoming batch.
+            Start your journey at INAD and join our growing family of successful
+            alumni. Limited seats available for the upcoming batch.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -437,7 +452,7 @@ const Placement = () => {
               <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              to="/contact"
+              to="/contact-us"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white/30 text-white font-semibold text-sm hover:bg-white hover:text-black hover:border-white transition-all duration-300 group"
             >
               Contact Us

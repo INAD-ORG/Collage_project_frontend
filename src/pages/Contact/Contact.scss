@@ -44,7 +44,7 @@ $transition-speed: 0.3s;
         color: #fff;
         z-index: 10;
 
-        @include sm{
+        @include sm {
           font-size: 50px;
         }
       }
@@ -278,7 +278,8 @@ $transition-speed: 0.3s;
           font-size: 18px;
           font-weight: 600;
           cursor: pointer;
-          transition: background-color $transition-speed ease,
+          transition:
+            background-color $transition-speed ease,
             transform $transition-speed ease;
 
           &:hover {
@@ -315,11 +316,10 @@ $transition-speed: 0.3s;
       font-size: 1rem;
       cursor: pointer;
       transition: 0.3s ease;
-    
+
       &:hover {
         background-color: #105be0;
       }
     }
-    
   }
 }

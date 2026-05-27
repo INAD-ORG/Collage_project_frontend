@@ -15,7 +15,7 @@ const fetchCourse = async () => {
   }
 
   const { data } = await axios.get(
-    `${baseUrl}/course/68072c650f285b17a020a6e5`
+    `${baseUrl}/course/68072c650f285b17a020a6e5`,
   );
   console.log(data);
   return data?.course;
@@ -59,7 +59,6 @@ const Service1 = () => {
     );
   }
 
-
   const {
     bannerImage,
     bannerTitle,
@@ -92,8 +91,6 @@ const Service1 = () => {
         <div className="service-content-left">
           <h2>{courseTitle}</h2>
           <p style={{ whiteSpace: "pre-line" }}>{courseDescription}</p>
-
-
 
           <h3>{courseOfCoursesTitle}</h3>
           <ul>

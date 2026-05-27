@@ -6,7 +6,15 @@ import Loader from "../../components/Loader/Loader";
 import founder_img from "../../assets/images/founder.png";
 import SEO from "../../components/SEO/SEO";
 import useFullUrl from "../../utils/useFullUrl";
-import { FiAward, FiUsers, FiStar, FiMapPin, FiArrowRight, FiBriefcase, FiBookOpen } from "react-icons/fi";
+import {
+  FiAward,
+  FiUsers,
+  FiStar,
+  FiMapPin,
+  FiArrowRight,
+  FiBriefcase,
+  FiBookOpen,
+} from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
 import { Link } from "react-router-dom";
 
@@ -14,7 +22,7 @@ import { Link } from "react-router-dom";
 const fetchBanner = async () => {
   if (!navigator.onLine) throw new Error("NETWORK_ERROR");
   const { data } = await axios.get(
-    `${baseUrl}/banner/about-banner/67e7720bf86def3cbf7ba215`
+    `${baseUrl}/banner/about-banner/67e7720bf86def3cbf7ba215`,
   );
   return data;
 };
@@ -67,7 +75,9 @@ const About = () => {
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
           <h3 className="text-white text-xl mb-2">Failed to load data</h3>
-          <p className="text-white/40">Try refreshing the page or check your connection.</p>
+          <p className="text-white/40">
+            Try refreshing the page or check your connection.
+          </p>
         </div>
       </div>
     );
@@ -75,7 +85,7 @@ const About = () => {
 
   // Stats data
   const statsData = [
-    { icon: <FiUsers />, label: "Students", value: "5000+" },
+    { icon: <FiUsers />, label: "Students", value: "10000+" },
     { icon: <FiAward />, label: "Awards", value: "50+" },
     { icon: <FiStar />, label: "Rating", value: "4.9" },
   ];
@@ -93,7 +103,10 @@ const About = () => {
       <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
-            src={bannerData?.image || "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920"}
+            src={
+              bannerData?.image ||
+              "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920"
+            }
             alt="about banner"
             className="absolute inset-0 w-full h-full object-cover animate-slow-zoom"
             loading="lazy"
@@ -120,8 +133,6 @@ const About = () => {
                   About <span className="text-yellow-400">Us</span>
                 </h1>
 
-               
-
                 {/* CTA Buttons */}
                 <div className="flex flex-wrap gap-4 mt-8 animate-fadeInUp animation-delay-400">
                   <Link
@@ -136,7 +147,7 @@ const About = () => {
                   </Link>
 
                   <Link
-                    to="/contact"
+                    to="/contact-us"
                     className="group relative px-7 py-3.5 border border-white/30 text-white font-medium text-sm flex items-center gap-2 hover:border-yellow-400 hover:text-yellow-400 transition-all duration-300"
                   >
                     Get in Touch
@@ -148,10 +159,16 @@ const About = () => {
                 <div className="flex gap-8 mt-10 animate-fadeInUp animation-delay-600">
                   {statsData.map((stat, i) => (
                     <div key={i} className="flex items-center gap-3">
-                      <span className="text-yellow-400 text-xl">{stat.icon}</span>
+                      <span className="text-yellow-400 text-xl">
+                        {stat.icon}
+                      </span>
                       <div>
-                        <div className="text-white font-bold text-lg">{stat.value}</div>
-                        <div className="text-white/40 text-xs">{stat.label}</div>
+                        <div className="text-white font-bold text-lg">
+                          {stat.value}
+                        </div>
+                        <div className="text-white/40 text-xs">
+                          {stat.label}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -164,7 +181,6 @@ const About = () => {
 
       {/* About Content Section - Consistent with HomeContent style */}
       <div className="relative bg-black py-16 sm:py-20 lg:py-28 overflow-hidden">
-        
         {/* Abstract Background - Same as other components */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] border-[30px] border-white/[0.02] rotate-45" />
@@ -173,8 +189,12 @@ const About = () => {
           <div className="absolute top-20 left-1/4 w-3 h-3 bg-yellow-400/20 rounded-full" />
           <div className="absolute bottom-32 right-1/3 w-4 h-4 border-2 border-white/5 rotate-45" />
           <div className="absolute top-1/2 left-10 w-2 h-2 bg-white/10 rounded-full" />
-          <div className="absolute top-1/4 right-1/4 text-yellow-400/15 text-2xl font-light">+</div>
-          <div className="absolute bottom-1/4 left-1/3 text-white/5 text-xl">+</div>
+          <div className="absolute top-1/4 right-1/4 text-yellow-400/15 text-2xl font-light">
+            +
+          </div>
+          <div className="absolute bottom-1/4 left-1/3 text-white/5 text-xl">
+            +
+          </div>
           <div className="absolute top-10 right-20 w-20 h-px bg-yellow-400/20 rotate-45" />
           <div className="absolute bottom-40 left-10 w-16 h-px bg-white/10 -rotate-45" />
           <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent" />
@@ -182,7 +202,6 @@ const About = () => {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24 items-start">
-            
             {/* Left Side - Content Text */}
             <div className="order-2 lg:order-1">
               {/* Section Label */}
@@ -196,7 +215,10 @@ const About = () => {
               {/* Description paragraphs */}
               <div className="space-y-4">
                 {aboutData?.slice(0, 2)?.map((item, index) => (
-                  <p key={index} className="text-white/50 text-base leading-relaxed">
+                  <p
+                    key={index}
+                    className="text-white/50 text-base leading-relaxed"
+                  >
                     {item}
                   </p>
                 ))}
@@ -208,25 +230,34 @@ const About = () => {
                   <div className="w-10 h-10 border border-yellow-400/30 flex items-center justify-center mb-3 group-hover:bg-yellow-400/10 transition-colors">
                     <FiStar className="text-yellow-400 text-lg" />
                   </div>
-                  <h3 className="text-white font-semibold text-lg mb-2">Our Mission</h3>
+                  <h3 className="text-white font-semibold text-lg mb-2">
+                    Our Mission
+                  </h3>
                   <p className="text-white/40 text-sm">
-                    To empower creative minds with world-class design education and industry exposure.
+                    To empower creative minds with world-class design education
+                    and industry exposure.
                   </p>
                 </div>
                 <div className="p-5 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 group">
                   <div className="w-10 h-10 border border-yellow-400/30 flex items-center justify-center mb-3 group-hover:bg-yellow-400/10 transition-colors">
                     <FiAward className="text-yellow-400 text-lg" />
                   </div>
-                  <h3 className="text-white font-semibold text-lg mb-2">Our Vision</h3>
+                  <h3 className="text-white font-semibold text-lg mb-2">
+                    Our Vision
+                  </h3>
                   <p className="text-white/40 text-sm">
-                    To become India's leading institution for creative and design education.
+                    To become India's leading institution for creative and
+                    design education.
                   </p>
                 </div>
               </div>
 
               {/* Additional paragraphs */}
               {aboutData?.slice(2)?.map((item, index) => (
-                <p key={index + 2} className="text-white/50 text-base leading-relaxed mt-4">
+                <p
+                  key={index + 2}
+                  className="text-white/50 text-base leading-relaxed mt-4"
+                >
                   {item}
                 </p>
               ))}
@@ -250,7 +281,7 @@ const About = () => {
                     />
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    
+
                     {/* Corner accents */}
                     <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-yellow-400/60 z-10" />
                     <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-yellow-400/60 z-10" />
@@ -260,14 +291,23 @@ const About = () => {
                   <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="w-6 h-px bg-yellow-400"></span>
-                      <span className="text-yellow-400 text-xs uppercase tracking-wider">Founder</span>
+                      <span className="text-yellow-400 text-xs uppercase tracking-wider">
+                        Founder
+                      </span>
                     </div>
-                    <h3 className="text-white text-2xl font-bold">Sumit Kumar</h3>
-                    <p className="text-white/40 text-sm mt-1">Founder & Principal Director</p>
-                    
+                    <h3 className="text-white text-2xl font-bold">
+                      Sumit Kumar
+                    </h3>
+                    <p className="text-white/40 text-sm mt-1">
+                      Founder & Principal Director
+                    </p>
+
                     {/* Social/Contact indicators */}
                     <div className="flex items-center gap-4 mt-4">
-                      <Link to="/contact" className="flex items-center gap-2 text-xs text-white/40 hover:text-yellow-400 transition-colors">
+                      <Link
+                        to="/contact-us"
+                        className="flex items-center gap-2 text-xs text-white/40 hover:text-yellow-400 transition-colors"
+                      >
                         Get in Touch <FiArrowRight size={12} />
                       </Link>
                     </div>
@@ -278,7 +318,9 @@ const About = () => {
                 <div className="absolute -bottom-4 -right-4 bg-yellow-400 text-black p-4 shadow-xl z-20">
                   <div className="text-center">
                     <div className="text-xl font-bold">18+</div>
-                    <div className="text-[10px] text-black/60">Years of Excellence</div>
+                    <div className="text-[10px] text-black/60">
+                      Years of Excellence
+                    </div>
                   </div>
                 </div>
               </div>
@@ -295,29 +337,39 @@ const About = () => {
               <div className="w-12 h-12 mx-auto border border-yellow-400/30 flex items-center justify-center mb-3 group-hover:bg-yellow-400/10 transition-colors">
                 <FiUsers className="text-yellow-400 text-xl" />
               </div>
-              <div className="text-white text-2xl sm:text-3xl font-bold">5000+</div>
+              <div className="text-white text-2xl sm:text-3xl font-bold">
+                10000+
+              </div>
               <div className="text-white/40 text-xs mt-1">Students</div>
             </div>
             <div className="p-6 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 group">
               <div className="w-12 h-12 mx-auto border border-yellow-400/30 flex items-center justify-center mb-3 group-hover:bg-yellow-400/10 transition-colors">
                 <FiAward className="text-yellow-400 text-xl" />
               </div>
-              <div className="text-white text-2xl sm:text-3xl font-bold">50+</div>
+              <div className="text-white text-2xl sm:text-3xl font-bold">
+                50+
+              </div>
               <div className="text-white/40 text-xs mt-1">Awards</div>
             </div>
             <div className="p-6 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 group">
               <div className="w-12 h-12 mx-auto border border-yellow-400/30 flex items-center justify-center mb-3 group-hover:bg-yellow-400/10 transition-colors">
                 <FiMapPin className="text-yellow-400 text-xl" />
               </div>
-              <div className="text-white text-2xl sm:text-3xl font-bold">10000+</div>
+              <div className="text-white text-2xl sm:text-3xl font-bold">
+                10000+
+              </div>
               <div className="text-white/40 text-xs mt-1">Alumni Network</div>
             </div>
             <div className="p-6 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 group">
               <div className="w-12 h-12 mx-auto border border-yellow-400/30 flex items-center justify-center mb-3 group-hover:bg-yellow-400/10 transition-colors">
                 <FiBriefcase className="text-yellow-400 text-xl" />
               </div>
-              <div className="text-white text-2xl sm:text-3xl font-bold">100%</div>
-              <div className="text-white/40 text-xs mt-1">Placement Assistance</div>
+              <div className="text-white text-2xl sm:text-3xl font-bold">
+                100%
+              </div>
+              <div className="text-white/40 text-xs mt-1">
+                Placement Assistance
+              </div>
             </div>
           </div>
         </div>
@@ -328,16 +380,20 @@ const About = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <span className="w-8 h-px bg-yellow-400/40"></span>
-            <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.3em] uppercase">Start Your Journey</span>
+            <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.3em] uppercase">
+              Start Your Journey
+            </span>
             <span className="w-8 h-px bg-yellow-400/40"></span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white mb-4">
             Ready to Begin Your{" "}
-            <span className="text-yellow-400 font-medium">Creative Journey?</span>
+            <span className="text-yellow-400 font-medium">
+              Creative Journey?
+            </span>
           </h2>
           <p className="text-white/40 max-w-2xl mx-auto mb-8">
-            Join the International Academy of Design and transform your passion into a profession.
-            Limited seats available for the upcoming batch.
+            Join the International Academy of Design and transform your passion
+            into a profession. Limited seats available for the upcoming batch.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -348,7 +404,7 @@ const About = () => {
               <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              to="/contact"
+              to="/contact-us"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white/30 text-white font-semibold text-sm hover:bg-white hover:text-black hover:border-white transition-all duration-300 group"
             >
               Contact Us

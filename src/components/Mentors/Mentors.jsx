@@ -24,14 +24,22 @@ const fetchStaffs = async () => {
 const Mentors = () => {
   const [activeTab, setActiveTab] = useState("all");
 
-  const { data: mentors, isLoading: mLoad, isError: mErr } = useQuery({
+  const {
+    data: mentors,
+    isLoading: mLoad,
+    isError: mErr,
+  } = useQuery({
     queryKey: ["mentors"],
     queryFn: fetchMentors,
     staleTime: 1000 * 60 * 5,
     retry: 2,
   });
 
-  const { data: staffs, isLoading: sLoad, isError: sErr } = useQuery({
+  const {
+    data: staffs,
+    isLoading: sLoad,
+    isError: sErr,
+  } = useQuery({
     queryKey: ["staffs"],
     queryFn: fetchStaffs,
     staleTime: 1000 * 60 * 5,
@@ -41,24 +49,29 @@ const Mentors = () => {
   if (mErr || sErr) {
     const error = mErr || sErr;
     if (error?.name === "AxiosError") {
-      const isNetworkError = !error.response || error.message.includes("ECONNRESET");
+      const isNetworkError =
+        !error.response || error.message.includes("ECONNRESET");
       if (isNetworkError) {
-        setTimeout(() => toast.error("Network error. Please check your connection."), 100);
+        setTimeout(
+          () => toast.error("Network error. Please check your connection."),
+          100,
+        );
       }
     }
   }
 
   if (mLoad || sLoad) return <Loader />;
 
-  const dMentors = (mentors || []).map(m => ({ ...m, type: "mentor" }));
-  const dStaffs = (staffs || []).map(s => ({ ...s, type: "staff" }));
-  
+  const dMentors = (mentors || []).map((m) => ({ ...m, type: "mentor" }));
+  const dStaffs = (staffs || []).map((s) => ({ ...s, type: "staff" }));
+
   const allMembers = [...dMentors, ...dStaffs];
-  const filteredMembers = activeTab === "all" 
-    ? allMembers 
-    : activeTab === "mentor" 
-      ? dMentors 
-      : dStaffs;
+  const filteredMembers =
+    activeTab === "all"
+      ? allMembers
+      : activeTab === "mentor"
+        ? dMentors
+        : dStaffs;
 
   const tabs = [
     { id: "all", label: "All", count: allMembers.length },
@@ -81,27 +94,27 @@ const Mentors = () => {
 
   return (
     <div className="relative bg-black py-16 sm:py-20 lg:py-24 overflow-hidden">
-      
       {/* Abstract Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute left-1/4 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent hidden sm:block" />
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-yellow-400/10 to-transparent hidden sm:block" />
         <div className="absolute left-3/4 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent hidden sm:block" />
-        
+
         <div className="absolute top-20 right-10 w-64 h-64 border border-white/[0.03] rotate-45" />
         <div className="absolute bottom-20 left-10 w-48 h-48 border-2 border-dashed border-yellow-400/10 -rotate-12" />
-        
+
         <div className="absolute bottom-1/3 right-1/3 w-3 h-3 border border-white/10 rounded-full" />
         <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-white/20" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Header */}
         <div className="mb-10 sm:mb-14">
           <div className="flex items-center gap-3 mb-4">
             <span className="w-8 h-px bg-yellow-400/40"></span>
-            <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.3em] uppercase">Our Team</span>
+            <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.3em] uppercase">
+              Our Team
+            </span>
             <span className="h-px flex-1 bg-gradient-to-r from-yellow-400/20 to-transparent hidden sm:block"></span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -159,10 +172,12 @@ const Mentors = () => {
             }}
             className="mentors-swiper"
           >
-            {(filteredMembers.length > 3 ? [...filteredMembers, ...filteredMembers] : filteredMembers).map((member, index) => (
+            {(filteredMembers.length > 3
+              ? [...filteredMembers, ...filteredMembers]
+              : filteredMembers
+            ).map((member, index) => (
               <SwiperSlide key={`${member._id || member.id || index}-${index}`}>
                 <div className="group relative cursor-pointer">
-                  
                   <div className="relative overflow-hidden">
                     <div className="relative aspect-[3/4] overflow-hidden">
                       <img
@@ -171,27 +186,29 @@ const Mentors = () => {
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                         loading="lazy"
                       />
-                      
+
                       {/* Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                      
+
                       {/* Type Badge */}
                       <div className="absolute top-3 left-3 z-10">
-                        <span className={`px-2 py-1 text-[10px] font-medium uppercase tracking-wider ${getBadgeColor(member.type)}`}>
+                        <span
+                          className={`px-2 py-1 text-[10px] font-medium uppercase tracking-wider ${getBadgeColor(member.type)}`}
+                        >
                           {member.type}
                         </span>
                       </div>
-                      
+
                       {/* Corner Triangle */}
                       <div className="absolute top-0 right-0 w-0 h-0 border-t-[25px] border-r-[25px] border-t-yellow-400/0 group-hover:border-t-yellow-400/80 border-r-yellow-400/0 group-hover:border-r-yellow-400/80 transition-all duration-500 z-10" />
                     </div>
-                    
+
                     {/* Content - Name always visible, Position on hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 z-10">
                       <h3 className="text-white font-bold text-sm sm:text-base lg:text-lg leading-tight">
                         {member.name}
                       </h3>
-                      
+
                       {/* Position - Appears on hover */}
                       <div className="overflow-hidden max-h-0 group-hover:max-h-10 transition-all duration-500">
                         <div className="w-6  bg-yellow-400 mt-2 mb-1"></div>

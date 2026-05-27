@@ -1,8 +1,25 @@
-import { MdOutlineLocationOn, MdOutlineEmail, MdPhone, MdArrowForward } from "react-icons/md";
+import {
+  MdOutlineLocationOn,
+  MdOutlineEmail,
+  MdPhone,
+  MdArrowForward,
+} from "react-icons/md";
 import { LuPhoneCall } from "react-icons/lu";
-import { FaFacebookSquare, FaInstagram, FaTwitter, FaLinkedin, FaArrowRight } from "react-icons/fa";
+import {
+  FaFacebookSquare,
+  FaInstagram,
+  FaTwitter,
+  FaLinkedin,
+  FaArrowRight,
+} from "react-icons/fa";
 import { RiInstagramFill } from "react-icons/ri";
-import { FiMapPin, FiMail, FiPhone, FiSend, FiCheckCircle } from "react-icons/fi";
+import {
+  FiMapPin,
+  FiMail,
+  FiPhone,
+  FiSend,
+  FiCheckCircle,
+} from "react-icons/fi";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -18,7 +35,7 @@ const fetchBanner = async () => {
     throw new Error("NETWORK_ERROR");
   }
   const { data } = await axios.get(
-    `${baseUrl}/banner/contact-banner/67e772d0768539d1e12454a7`
+    `${baseUrl}/banner/contact-banner/67e772d0768539d1e12454a7`,
   );
   return data;
 };
@@ -36,7 +53,9 @@ const Contact = () => {
         }
       } catch (error) {
         console.error("Error fetching contact details:", error);
-        toast.error(error.response?.data?.message || "Failed to load contact details");
+        toast.error(
+          error.response?.data?.message || "Failed to load contact details",
+        );
       }
     };
     fetchContactDetails();
@@ -79,7 +98,10 @@ const Contact = () => {
 
     try {
       setLoading(true);
-      const { data } = await axios.post(`${baseUrl}/contact/new-contact`, formData);
+      const { data } = await axios.post(
+        `${baseUrl}/contact/new-contact`,
+        formData,
+      );
       if (data.result === 1) {
         toast.success("Message sent successfully!");
         setFormData({
@@ -125,8 +147,12 @@ const Contact = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <h3 className="text-white text-xl mb-2">Failed to load contact banner</h3>
-          <p className="text-white/40">Try refreshing the page or check your connection.</p>
+          <h3 className="text-white text-xl mb-2">
+            Failed to load contact banner
+          </h3>
+          <p className="text-white/40">
+            Try refreshing the page or check your connection.
+          </p>
         </div>
       </div>
     );
@@ -145,7 +171,7 @@ const Contact = () => {
         },
         () => {
           toast.error("Please allow location access to get directions.");
-        }
+        },
       );
     } else {
       toast.error("Geolocation not supported on this browser.");
@@ -172,7 +198,10 @@ const Contact = () => {
       <div className="relative w-full h-[50vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
-            src={data?.image || "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920"}
+            src={
+              data?.image ||
+              "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920"
+            }
             alt="Contact Banner"
             className="absolute inset-0 w-full h-full object-cover animate-slow-zoom"
             loading="lazy"
@@ -199,15 +228,17 @@ const Contact = () => {
                   Contact <span className="text-yellow-400">Us</span>
                 </h1>
 
-               
-
                 {/* Stats */}
                 <div className="flex flex-wrap gap-8 mt-8 animate-fadeInUp animation-delay-400">
                   {statsData.map((stat, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div>
-                        <div className="text-white font-bold text-lg">{stat.value}</div>
-                        <div className="text-white/40 text-xs">{stat.label}</div>
+                        <div className="text-white font-bold text-lg">
+                          {stat.value}
+                        </div>
+                        <div className="text-white/40 text-xs">
+                          {stat.label}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -220,7 +251,6 @@ const Contact = () => {
 
       {/* Contact Content Section */}
       <div className="relative bg-black py-16 sm:py-20 lg:py-28 overflow-hidden">
-        
         {/* Abstract Background */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] border-[30px] border-white/[0.02] rotate-45" />
@@ -229,8 +259,12 @@ const Contact = () => {
           <div className="absolute top-20 left-1/4 w-3 h-3 bg-yellow-400/20 rounded-full" />
           <div className="absolute bottom-32 right-1/3 w-4 h-4 border-2 border-white/5 rotate-45" />
           <div className="absolute top-1/2 left-10 w-2 h-2 bg-white/10 rounded-full" />
-          <div className="absolute top-1/4 right-1/4 text-yellow-400/15 text-2xl font-light">+</div>
-          <div className="absolute bottom-1/4 left-1/3 text-white/5 text-xl">+</div>
+          <div className="absolute top-1/4 right-1/4 text-yellow-400/15 text-2xl font-light">
+            +
+          </div>
+          <div className="absolute bottom-1/4 left-1/3 text-white/5 text-xl">
+            +
+          </div>
           <div className="absolute top-10 right-20 w-20 h-px bg-yellow-400/20 rotate-45" />
           <div className="absolute bottom-40 left-10 w-16 h-px bg-white/10 -rotate-45" />
           <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent" />
@@ -249,7 +283,6 @@ const Contact = () => {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -263,13 +296,13 @@ const Contact = () => {
               Get In <span className="text-yellow-400 font-medium">Touch</span>
             </h2>
             <p className="text-white/40 mt-4 max-w-2xl mx-auto">
-              We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              We'd love to hear from you. Send us a message and we'll respond as
+              soon as possible.
             </p>
           </div>
 
           {/* Contact Grid - 2 Column Layout */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-            
             {/* Left Side - Contact Information */}
             <div className="space-y-6">
               {/* Contact Info Cards */}
@@ -280,7 +313,10 @@ const Contact = () => {
                   </div>
                   <h3 className="text-white font-semibold text-lg">Email Us</h3>
                 </div>
-                <a href={`mailto:${contactDetailData.email}`} className="text-white/50 text-sm hover:text-yellow-400 transition-colors block">
+                <a
+                  href={`mailto:${contactDetailData.email}`}
+                  className="text-white/50 text-sm hover:text-yellow-400 transition-colors block"
+                >
                   {contactDetailData.email || "info@inad.ac.in"}
                 </a>
               </div>
@@ -292,7 +328,10 @@ const Contact = () => {
                   </div>
                   <h3 className="text-white font-semibold text-lg">Call Us</h3>
                 </div>
-                <a href={`tel:${contactDetailData.phoneNumber}`} className="text-white/50 text-sm hover:text-yellow-400 transition-colors block">
+                <a
+                  href={`tel:${contactDetailData.phoneNumber}`}
+                  className="text-white/50 text-sm hover:text-yellow-400 transition-colors block"
+                >
                   {contactDetailData.phoneNumber || "+91-XXXXXXXXXX"}
                 </a>
               </div>
@@ -305,28 +344,47 @@ const Contact = () => {
                   <h3 className="text-white font-semibold text-lg">Visit Us</h3>
                 </div>
                 <p className="text-white/50 text-sm leading-relaxed">
-                  {contactDetailData.address || "International Academy of Design, Sikar, Rajasthan"}
+                  {contactDetailData.address ||
+                    "International Academy of Design, Sikar, Rajasthan"}
                 </p>
               </div>
 
               {/* Social Links */}
               <div className="border border-white/10 p-6">
-                <h3 className="text-white font-semibold text-lg mb-4">Follow Us</h3>
+                <h3 className="text-white font-semibold text-lg mb-4">
+                  Follow Us
+                </h3>
                 <div className="flex gap-4">
-                  <a href={contactDetailData.facebookLink} target="_blank" rel="noopener noreferrer" 
-                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group">
+                  <a
+                    href={contactDetailData.facebookLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group"
+                  >
                     <FaFacebookSquare className="text-white/60 group-hover:text-yellow-400 text-lg" />
                   </a>
-                  <a href={contactDetailData.instagramLink} target="_blank" rel="noopener noreferrer"
-                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group">
+                  <a
+                    href={contactDetailData.instagramLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group"
+                  >
                     <RiInstagramFill className="text-white/60 group-hover:text-yellow-400 text-lg" />
                   </a>
-                  <a href={contactDetailData.twitterLink} target="_blank" rel="noopener noreferrer"
-                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group">
+                  <a
+                    href={contactDetailData.twitterLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group"
+                  >
                     <FaTwitter className="text-white/60 group-hover:text-yellow-400 text-lg" />
                   </a>
-                  <a href={contactDetailData.linkedinLink} target="_blank" rel="noopener noreferrer"
-                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group">
+                  <a
+                    href={contactDetailData.linkedinLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 border border-white/20 flex items-center justify-center hover:border-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 group"
+                  >
                     <FaLinkedin className="text-white/60 group-hover:text-yellow-400 text-lg" />
                   </a>
                 </div>
@@ -344,7 +402,10 @@ const Contact = () => {
               </div>
 
               <h3 className="text-white text-2xl font-light mb-6">
-                Let's Start a <span className="text-yellow-400 font-medium">Conversation</span>
+                Let's Start a{" "}
+                <span className="text-yellow-400 font-medium">
+                  Conversation
+                </span>
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -495,10 +556,13 @@ const Contact = () => {
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white mb-4">
             Begin Your{" "}
-            <span className="text-yellow-400 font-medium">Creative Journey</span>
+            <span className="text-yellow-400 font-medium">
+              Creative Journey
+            </span>
           </h2>
           <p className="text-white/40 max-w-2xl mx-auto mb-8">
-            Take the first step towards a successful career in design. Limited seats available.
+            Take the first step towards a successful career in design. Limited
+            seats available.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

@@ -7,7 +7,13 @@ import { Link } from "react-router-dom";
 import useFullUrl from "../../utils/useFullUrl";
 import SEO from "../../components/SEO/SEO";
 import { toast } from "sonner";
-import { FiArrowRight, FiImage, FiCamera, FiCalendar, FiFolder } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiImage,
+  FiCamera,
+  FiCalendar,
+  FiFolder,
+} from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
 
 const fetchFolders = async () => {
@@ -15,7 +21,7 @@ const fetchFolders = async () => {
     throw new Error("NETWORK_ERROR");
   }
   const { data } = await axios.get(
-    `${baseUrl}/gallery-folder/all-gallery-folders`
+    `${baseUrl}/gallery-folder/all-gallery-folders`,
   );
   return data.folders;
 };
@@ -25,7 +31,7 @@ const fetchBanner = async () => {
     throw new Error("NETWORK_ERROR");
   }
   const { data } = await axios.get(
-    `${baseUrl}/banner/gallery-banner/67e772a7768539d1e12454a4`
+    `${baseUrl}/banner/gallery-banner/67e772a7768539d1e12454a4`,
   );
   return data?.image;
 };
@@ -77,7 +83,11 @@ const Gallery = () => {
 
   // Stats data
   const statsData = [
-    { icon: <FiFolder />, label: "Album Categories", value: folders?.length || "0" },
+    {
+      icon: <FiFolder />,
+      label: "Album Categories",
+      value: folders?.length || "0",
+    },
     { icon: <FiCamera />, label: "Memories Captured", value: "5000+" },
     { icon: <FiCalendar />, label: "Events Covered", value: "100+" },
   ];
@@ -125,8 +135,6 @@ const Gallery = () => {
                   Our <span className="text-yellow-400">Gallery</span>
                 </h1>
 
-                
-
                 {/* Stats */}
                 <div className="flex flex-wrap gap-8 mt-8 animate-fadeInUp animation-delay-400">
                   {statsData.map((stat, i) => (
@@ -153,7 +161,6 @@ const Gallery = () => {
 
       {/* Gallery Grid Section */}
       <div className="relative bg-black py-16 sm:py-20 lg:py-28 overflow-hidden">
-        
         {/* Abstract Background */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] border-[30px] border-white/[0.02] rotate-45" />
@@ -186,7 +193,6 @@ const Gallery = () => {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -197,10 +203,12 @@ const Gallery = () => {
               <span className="w-6 sm:w-8 h-px bg-yellow-400/40"></span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-tight">
-              Explore Our <span className="text-yellow-400 font-medium">Albums</span>
+              Explore Our{" "}
+              <span className="text-yellow-400 font-medium">Albums</span>
             </h2>
             <p className="text-white/40 mt-4 max-w-2xl mx-auto">
-              Browse through our collection of memorable moments, events, and campus life
+              Browse through our collection of memorable moments, events, and
+              campus life
             </p>
           </div>
 
@@ -209,8 +217,12 @@ const Gallery = () => {
             <div className="text-center py-20">
               <div className="inline-block p-6 border border-white/10">
                 <FiImage className="text-yellow-400 text-4xl mx-auto mb-4" />
-                <h3 className="text-white text-xl mb-2">Failed to load gallery folders.</h3>
-                <p className="text-white/40">Try refreshing the page or check your connection.</p>
+                <h3 className="text-white text-xl mb-2">
+                  Failed to load gallery folders.
+                </h3>
+                <p className="text-white/40">
+                  Try refreshing the page or check your connection.
+                </p>
               </div>
             </div>
           )}
@@ -220,7 +232,9 @@ const Gallery = () => {
             <div className="text-center py-20">
               <div className="inline-block p-6 border border-white/10">
                 <FiImage className="text-yellow-400 text-4xl mx-auto mb-4" />
-                <p className="text-white/40 text-lg">No gallery folders found.</p>
+                <p className="text-white/40 text-lg">
+                  No gallery folders found.
+                </p>
               </div>
             </div>
           )}
@@ -231,13 +245,12 @@ const Gallery = () => {
               {folders.map((item, index) => (
                 <Link
                   to={`/gallery/${item._id}?title=${encodeURIComponent(
-                    item.folderTitle
+                    item.folderTitle,
                   )}`}
                   key={item._id}
                   className="group block"
                 >
                   <div className="group relative bg-gradient-to-b from-black to-black/95 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 overflow-hidden rounded-none h-full">
-                    
                     {/* Image Container with Frame Effect */}
                     <div className="relative overflow-hidden">
                       {/* Inner Border Frame */}
@@ -423,7 +436,7 @@ const Gallery = () => {
               <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              to="/contact"
+              to="/contact-us"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white/30 text-white font-semibold text-sm hover:bg-white hover:text-black hover:border-white transition-all duration-300 group"
             >
               Contact Us

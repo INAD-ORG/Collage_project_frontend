@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { MdArrowForward } from "react-icons/md";
 import { FiStar } from "react-icons/fi";
 
+import enquiryImage from "../../assets/images/mainImg/enq.webp";
+
 const EnquiryBanner = () => {
   return (
     <div className="relative bg-black py-16 sm:py-20 lg:py-24 overflow-hidden">
@@ -72,8 +74,8 @@ const EnquiryBanner = () => {
               {/* Main Image Container */}
               <div className="relative aspect-[3/4] border-2 border-white/20 overflow-hidden">
                 <img
-                  src="https://images.pexels.com/photos/1852389/pexels-photo-1852389.jpeg?auto=compress&cs=tinysrgb&w=600"
-                  alt="Fashion Design Student"
+                  src={enquiryImage}
+                  alt="Enquiry"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   loading="lazy"
                 />
@@ -157,22 +159,21 @@ const EnquiryBanner = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
-                to="/enquiry"
-                className="group inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-yellow-400 text-black font-semibold text-sm sm:text-base hover:bg-yellow-300 transition-all duration-300 overflow-hidden relative"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  Enquiry Now
-                  <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-all duration-700"></span>
-              </Link>
-
-              <Link
                 to="/admission"
                 className="group inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 border-2 border-white/30 text-white font-semibold text-sm sm:text-base hover:bg-white hover:text-black hover:border-white transition-all duration-300"
               >
                 Apply for Admission
                 <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                to="/contact-us"
+                className="group inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-yellow-400 text-black font-semibold text-sm sm:text-base hover:bg-yellow-300 transition-all duration-300 overflow-hidden relative"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  Contact Us
+                  <MdArrowForward className="group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-all duration-700"></span>
               </Link>
             </div>
 

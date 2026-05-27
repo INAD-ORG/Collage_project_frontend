@@ -3,23 +3,23 @@ import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 
 const SocialFloat = () => {
   const socialLinks = [
-    { 
-      icon: <FaFacebookF />, 
-      url: "https://www.facebook.com/internationalacademyofdesign", 
+    {
+      icon: <FaFacebookF />,
+      url: "https://www.facebook.com/internationalacademyofdesign",
       label: "Facebook",
-      color: "hover:bg-[#1877F2]"
+      color: "hover:bg-[#1877F2]",
     },
-    { 
-      icon: <FaInstagram />, 
-      url: "https://www.instagram.com/inad.official/", 
+    {
+      icon: <FaInstagram />,
+      url: "https://www.instagram.com/inad.official/",
       label: "Instagram",
-      color: "hover:bg-[#E4405F]"
+      color: "hover:bg-[#E4405F]",
     },
-    { 
-      icon: <FaYoutube />, 
-      url: "https://www.youtube.com/@inadofficial", 
+    {
+      icon: <FaYoutube />,
+      url: "https://www.youtube.com/@inadofficial",
       label: "YouTube",
-      color: "hover:bg-[#FF0000]"
+      color: "hover:bg-[#FF0000]",
     },
   ];
 
@@ -40,7 +40,7 @@ const SocialFloat = () => {
           </span>
         </a>
       ))}
-      
+
       {/* Decorative Line */}
       <div className="w-px h-8 bg-gradient-to-b from-yellow-400/40 to-transparent mx-auto mt-1" />
     </div>

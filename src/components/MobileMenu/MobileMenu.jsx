@@ -49,13 +49,13 @@ const MobileMenu = () => {
         const allCourses = data?.courses || [];
 
         setMainCourses(
-          allCourses.filter((course) => course.courseType === "Main Course")
+          allCourses.filter((course) => course.courseType === "Main Course"),
         );
         setUgCourses(
-          allCourses.filter((course) => course.courseType === "UG Course")
+          allCourses.filter((course) => course.courseType === "UG Course"),
         );
         setPgCourses(
-          allCourses.filter((course) => course.courseType === "PG Course")
+          allCourses.filter((course) => course.courseType === "PG Course"),
         );
       } catch (err) {
         console.error("Error fetching courses:", err);
