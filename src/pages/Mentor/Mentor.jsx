@@ -31,7 +31,7 @@ const fetchBanner = async () => {
     throw new Error("NETWORK_ERROR");
   }
   const { data } = await axios.get(
-    `${baseUrl}/banner/staff-banner/67e7723fc95a30104036fdc1`,
+    `${baseUrl}/banner/mentor-banner/67e7722bc95a30104036fdbe`,
   );
   return data?.image;
 };
@@ -92,11 +92,6 @@ const Mentor = () => {
 
   // Stats data
   const statsData = [
-    {
-      icon: <FiUsers />,
-      label: "Expert Mentors",
-      value: data?.length || "10+",
-    },
     { icon: <FiAward />, label: "Years Combined Experience", value: "50+" },
     { icon: <FiStar />, label: "Student Satisfaction", value: "98%" },
   ];
@@ -111,7 +106,7 @@ const Mentor = () => {
       />
 
       {/* Banner Section - Consistent with HomeBanner */}
-      <div className="relative w-full h-[60vh] min-h-[600px] overflow-hidden">
+      <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
             src={
@@ -165,8 +160,7 @@ const Mentor = () => {
                   </Link>
                 </div>
 
-                {/* Stats - Same as HomeBanner */}
-                <div className="flex gap-8 mt-10 animate-fadeInUp animation-delay-600">
+                <div className="flex  sm:flex-wrap gap-8 mt-10 animate-fadeInUp animation-delay-600">
                   {statsData.map((stat, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <span className="text-yellow-400 text-xl">

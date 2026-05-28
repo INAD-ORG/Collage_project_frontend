@@ -29,7 +29,7 @@ const fetchBanner = async () => {
     throw new Error("NETWORK_ERROR");
   }
   const { data } = await axios.get(
-    `${baseUrl}/banner/mentor-banner/67e7722bc95a30104036fdbe`,
+    `${baseUrl}/banner/staff-banner/67e7723fc95a30104036fdc1`,
   );
   return data?.image;
 };
@@ -92,11 +92,6 @@ const Staff = () => {
 
   // Stats data
   const statsData = [
-    {
-      icon: <FiUsers />,
-      label: "Team Members",
-      value: data?.length || "10+",
-    },
     { icon: <FiAward />, label: "Years Combined Experience", value: "30+" },
     { icon: <FiStar />, label: "Student Support Rating", value: "95%" },
   ];

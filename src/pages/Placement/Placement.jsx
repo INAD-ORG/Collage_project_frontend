@@ -150,21 +150,25 @@ const Placement = () => {
 
                 {/* Stats */}
                 <div className="flex flex-wrap gap-6 mt-8 animate-fadeInUp animation-delay-400">
-                  {statsData.map((stat, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <span className="text-yellow-400 text-xl">
-                        {stat.icon}
-                      </span>
-                      <div>
-                        <div className="text-white font-bold text-lg">
-                          {stat.value}
-                        </div>
-                        <div className="text-white/40 text-xs">
-                          {stat.label}
+                  <div className="flex flex-wrap gap-6 max-[480px]:grid max-[480px]:grid-cols-2">
+                    {statsData.map((stat, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span className="text-yellow-400 text-xl">
+                          {stat.icon}
+                        </span>
+
+                        <div>
+                          <div className="text-white font-bold text-lg">
+                            {stat.value}
+                          </div>
+
+                          <div className="text-white/40 text-xs">
+                            {stat.label}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
