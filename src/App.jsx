@@ -40,6 +40,7 @@ import SingleGallery from "./pages/SingleGallery/SingleGallery";
 import SingleCourse from "./pages/SingleCourse/SingleCourse";
 import Float from "./components/Float/Float";
 import SocialFloat from "./components/Float/SocialFloat";
+import NotFound from "./pages/NotFound/NotFound";
 function App() {
   const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -79,10 +80,10 @@ function App() {
 
           <Navbar />
           <Routes>
+            <Route path="*" element={<NotFound />} />
             <Route path="/" element={<Homepage />} />
             <Route path="/about-us" element={<About />} />
             <Route path="/contact-us" element={<Contact />} />
-
             <Route path="/our-staff" element={<Staff />} />
             <Route path="/mentor" element={<Mentor />} />
             <Route path="/alumni" element={<Placement />} />
@@ -91,13 +92,11 @@ function App() {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/student-corner" element={<Student />} />
             <Route path="/gallery/:id" element={<SingleGallery />} />
-
             {/* Courses */}
             <Route
               path="/course/:couseType/:id/:courseName"
               element={<SingleCourse />}
             />
-
             {/* Services */}
             <Route path="/interior-design" element={<Service1 />} />
             <Route path="/graphic-design" element={<Service2 />} />
@@ -107,14 +106,12 @@ function App() {
             <Route path="/postgraduate-courses" element={<Service6 />} />
             <Route path="/architecture-design" element={<Service7 />} />
             <Route path="/digital-marketing" element={<Service8 />} />
-
             {/* ug */}
             <Route path="/undergraduate-course/Ba" element={<Ug1 />} />
             <Route path="/undergraduate-course/bcom" element={<Ug2 />} />
             <Route path="/undergraduate-course/Bsc" element={<Ug3 />} />
             <Route path="/undergraduate-course/Bba" element={<Ug4 />} />
             <Route path="/undergraduate-course/Blib" element={<Ug5 />} />
-
             {/* pg */}
             <Route path="/postgraduate-course/Ma" element={<Pg1 />} />
             <Route path="/postgraduate-course/Mcom" element={<Pg2 />} />

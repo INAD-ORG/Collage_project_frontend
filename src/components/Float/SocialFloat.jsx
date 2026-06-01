@@ -40,9 +40,6 @@ const SocialFloat = () => {
           </span>
         </a>
       ))}
-
-      {/* Decorative Line */}
-      <div className="w-px h-8 bg-gradient-to-b from-yellow-400/40 to-transparent mx-auto mt-1" />
     </div>
   );
 };
