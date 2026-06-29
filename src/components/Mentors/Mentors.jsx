@@ -1,66 +1,45 @@
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { baseUrl } from "../../main";
-import { toast } from "sonner";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import Loader from "../../components/Loader/Loader";
 import { useState } from "react";
-
-const fetchMentors = async () => {
-  if (!navigator.onLine) throw new Error("NETWORK_ERROR");
-  const { data } = await axios.get(`${baseUrl}/founder/all-founders`);
-  return data.founders || [];
-};
-
-const fetchStaffs = async () => {
-  if (!navigator.onLine) throw new Error("NETWORK_ERROR");
-  const { data } = await axios.get(`${baseUrl}/staff/all-staffs`);
-  return data.staff || [];
-};
+import { useFounders, useStaffs } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
 
 const Mentors = () => {
   const [activeTab, setActiveTab] = useState("all");
 
-  const {
-    data: mentors,
-    isLoading: mLoad,
+  // Using custom hooks
+  const { 
+    data: mentors = [], 
+    isLoading: mLoad, 
     isError: mErr,
-  } = useQuery({
-    queryKey: ["mentors"],
-    queryFn: fetchMentors,
-    staleTime: 1000 * 60 * 5,
-    retry: 2,
-  });
+    refetch: refetchMentors 
+  } = useFounders();
 
-  const {
-    data: staffs,
-    isLoading: sLoad,
+  const { 
+    data: staffs = [], 
+    isLoading: sLoad, 
     isError: sErr,
-  } = useQuery({
-    queryKey: ["staffs"],
-    queryFn: fetchStaffs,
-    staleTime: 1000 * 60 * 5,
-    retry: 2,
-  });
+    refetch: refetchStaffs 
+  } = useStaffs();
 
-  if (mErr || sErr) {
-    const error = mErr || sErr;
-    if (error?.name === "AxiosError") {
-      const isNetworkError =
-        !error.response || error.message.includes("ECONNRESET");
-      if (isNetworkError) {
-        setTimeout(
-          () => toast.error("Network error. Please check your connection."),
-          100,
-        );
-      }
-    }
-  }
-
+  // Show loader
   if (mLoad || sLoad) return <Loader />;
+
+  // Show error with retry
+  if (mErr || sErr) {
+    const refetch = mErr ? refetchMentors : refetchStaffs;
+    return (
+      <ErrorFallback
+        message="Failed to load team members. Please try again."
+        onRetry={refetch}
+        fullScreen={false}
+      />
+    );
+  }
 
   const dMentors = (mentors || []).map((m) => ({ ...m, type: "mentor" }));
   const dStaffs = (staffs || []).map((s) => ({ ...s, type: "staff" }));
@@ -211,7 +190,7 @@ const Mentors = () => {
 
                       {/* Position - Appears on hover */}
                       <div className="overflow-hidden max-h-0 group-hover:max-h-10 transition-all duration-500">
-                        <div className="w-6  bg-yellow-400 mt-2 mb-1"></div>
+                        <div className="w-6 bg-yellow-400 mt-2 mb-1"></div>
                         <p className="text-yellow-400 text-[10px] sm:text-xs uppercase tracking-wider">
                           {member.position}
                         </p>

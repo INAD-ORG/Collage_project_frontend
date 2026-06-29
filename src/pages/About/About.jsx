@@ -1,11 +1,4 @@
-import { baseUrl } from "../../main";
-import { toast } from "sonner";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import Loader from "../../components/Loader/Loader";
-import founder_img from "../../assets/images/founder.png";
-import SEO from "../../components/SEO/SEO";
-import useFullUrl from "../../utils/useFullUrl";
+import { Link } from "react-router-dom";
 import {
   FiAward,
   FiUsers,
@@ -13,73 +6,45 @@ import {
   FiMapPin,
   FiArrowRight,
   FiBriefcase,
-  FiBookOpen,
 } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
-import { Link } from "react-router-dom";
-
-// Fetch About Banner
-const fetchBanner = async () => {
-  if (!navigator.onLine) throw new Error("NETWORK_ERROR");
-  const { data } = await axios.get(
-    `${baseUrl}/banner/about-banner/67e7720bf86def3cbf7ba215`,
-  );
-  return data;
-};
-
-// Fetch About Content
-const fetchAboutContent = async () => {
-  if (!navigator.onLine) throw new Error("NETWORK_ERROR");
-  const { data } = await axios.get(`${baseUrl}/about/about-content`);
-  return data.about?.content || [];
-};
+import { useAboutBanner, useAboutContent } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
+import SEO from "../../components/SEO/SEO";
+import useFullUrl from "../../utils/useFullUrl";
+import founder_img from "../../assets/images/founder.png";
 
 const About = () => {
   const fullUrl = useFullUrl();
 
+  // Using custom hooks
   const {
     data: bannerData,
     isLoading: bannerLoading,
     isError: bannerError,
-    error: bannerErrorData,
-  } = useQuery({
-    queryKey: ["about-banner"],
-    queryFn: fetchBanner,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+    refetch: refetchBanner,
+  } = useAboutBanner();
 
   const {
-    data: aboutData,
+    data: aboutData = [],
     isLoading: aboutLoading,
     isError: aboutError,
-    error: aboutErrorData,
-  } = useQuery({
-    queryKey: ["about-content"],
-    queryFn: fetchAboutContent,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+    refetch: refetchAbout,
+  } = useAboutContent();
 
+  // Show loader
   if (bannerLoading || aboutLoading) return <Loader />;
 
+  // Show error with retry
   if (bannerError || aboutError) {
-    const errorMsg =
-      bannerErrorData?.message === "NETWORK_ERROR" ||
-      aboutErrorData?.message === "NETWORK_ERROR"
-        ? "🚫 Network error. Please check your connection."
-        : "❗ Server Error occurred.";
-    setTimeout(() => toast.error(errorMsg), 100);
-
+    const refetch = bannerError ? refetchBanner : refetchAbout;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <h3 className="text-white text-xl mb-2">Failed to load data</h3>
-          <p className="text-white/40">
-            Try refreshing the page or check your connection.
-          </p>
-        </div>
-      </div>
+      <ErrorFallback
+        message="Failed to load about data. Please try again."
+        onRetry={refetch}
+        fullScreen={true}
+      />
     );
   }
 
@@ -99,7 +64,7 @@ const About = () => {
         url={fullUrl}
       />
 
-      {/* Banner Section - Consistent with HomeBanner style */}
+      {/* Banner Section */}
       <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
@@ -112,7 +77,7 @@ const About = () => {
             loading="lazy"
           />
 
-          {/* Overlay - Same as HomeBanner */}
+          {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/70 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
@@ -155,7 +120,7 @@ const About = () => {
                   </Link>
                 </div>
 
-                {/* Stats - Same as HomeBanner */}
+                {/* Stats */}
                 <div className="flex gap-8 mt-10 animate-fadeInUp animation-delay-600">
                   {statsData.map((stat, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -179,9 +144,9 @@ const About = () => {
         </div>
       </div>
 
-      {/* About Content Section - Consistent with HomeContent style */}
+      {/* About Content Section */}
       <div className="relative bg-black py-16 sm:py-20 lg:py-28 overflow-hidden">
-        {/* Abstract Background - Same as other components */}
+        {/* Abstract Background */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] border-[30px] border-white/[0.02] rotate-45" />
           <div className="absolute top-1/3 -left-16 w-48 h-48 border-2 border-dashed border-yellow-400/10 rotate-12" />
@@ -263,7 +228,7 @@ const About = () => {
               ))}
             </div>
 
-            {/* Right Side - Founder Card (Consistent with Story component style) */}
+            {/* Right Side - Founder Card */}
             <div className="order-1 lg:order-2">
               <div className="relative max-w-md mx-auto lg:mx-0">
                 {/* Abstract shapes */}
@@ -329,7 +294,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* Key Stats Section - Consistent with ChooseUs style */}
+      {/* Key Stats Section */}
       <div className="relative bg-black py-16 sm:py-20 border-t border-white/5 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
@@ -375,7 +340,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* Bottom CTA Section - Consistent with EnquiryBanner style */}
+      {/* Bottom CTA Section */}
       <div className="relative bg-black py-16 sm:py-20 overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">

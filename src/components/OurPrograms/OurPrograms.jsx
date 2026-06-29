@@ -1,16 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { baseUrl } from "../../main";
-import Loader from "../../components/Loader/Loader";
-import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
 import { useEffect, useState } from "react";
+import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
 import { BsGrid, BsList } from "react-icons/bs";
-
-const fetchCourses = async () => {
-  const { data } = await axios.get(`${baseUrl}/course/all-course`);
-  return data.courses || [];
-};
+import { useCourses } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
 
 const OurPrograms = () => {
   const location = useLocation();
@@ -29,26 +23,20 @@ const OurPrograms = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [viewMode, setViewMode] = useState("grid");
 
-  const {
-    data: courses,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["all-courses"],
-    queryFn: fetchCourses,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  // Using the custom hook
+  const { data: courses = [], isLoading, isError, refetch } = useCourses();
 
+  // Show loader
   if (isLoading) return <Loader />;
 
+  // Show error with retry
   if (isError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <p className="text-white/60">Failed to load programs</p>
-        </div>
-      </div>
+      <ErrorFallback
+        message="Failed to load programs. Please try again."
+        onRetry={refetch}
+        fullScreen={false}
+      />
     );
   }
 
@@ -216,10 +204,7 @@ const OurPrograms = () => {
                   {/* Image */}
                   <div className="relative overflow-hidden aspect-[4/3]">
                     <img
-                      src={
-                        item.smCourseImage ||
-                        "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=600"
-                      }
+                      src={item.smCourseImage}
                       alt={item.bannerTitle}
                       className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                     />
@@ -269,10 +254,7 @@ const OurPrograms = () => {
                 {/* Image */}
                 <div className="sm:w-56 h-48 sm:h-40 overflow-hidden flex-shrink-0 border-b sm:border-b-0 sm:border-r border-white/10">
                   <img
-                    src={
-                      item.smCourseImage ||
-                      "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400"
-                    }
+                    src={item.smCourseImage}
                     alt={item.bannerTitle}
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
                   />

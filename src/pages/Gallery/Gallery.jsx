@@ -1,12 +1,5 @@
 import { useState } from "react";
-import { baseUrl } from "../../main";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import Loader from "../../components/Loader/Loader";
 import { Link } from "react-router-dom";
-import useFullUrl from "../../utils/useFullUrl";
-import SEO from "../../components/SEO/SEO";
-import { toast } from "sonner";
 import {
   FiArrowRight,
   FiImage,
@@ -15,71 +8,46 @@ import {
   FiFolder,
 } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
-
-const fetchFolders = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(
-    `${baseUrl}/gallery-folder/all-gallery-folders`,
-  );
-  return data.folders;
-};
-
-const fetchBanner = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(
-    `${baseUrl}/banner/gallery-banner/67e772a7768539d1e12454a4`,
-  );
-  return data?.image;
-};
+import { useGalleryFolders, useGalleryBanner } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
+import SEO from "../../components/SEO/SEO";
+import useFullUrl from "../../utils/useFullUrl";
 
 const Gallery = () => {
   const fullUrl = useFullUrl();
 
+  // Using custom hooks
   const {
-    data: folders,
+    data: folders = [],
     isLoading: isFoldersLoading,
     isError: isFoldersError,
-    error: foldersError,
-  } = useQuery({
-    queryKey: ["folders"],
-    queryFn: fetchFolders,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+    refetch: refetchFolders,
+  } = useGalleryFolders();
 
   const {
-    data: bannerImg,
+    data: bannerData,
     isLoading: isBannerLoading,
     isError: isBannerError,
-  } = useQuery({
-    queryKey: ["folderBanner"],
-    queryFn: fetchBanner,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+    refetch: refetchBanner,
+  } = useGalleryBanner();
 
-  if (isFoldersError) {
-    if (foldersError.name === "AxiosError") {
-      const isNetworkError =
-        !foldersError.response ||
-        foldersError.message.includes("ECONNRESET") ||
-        foldersError.response?.data?.message === "read ECONNRESET";
+  // Show loader
+  if (isFoldersLoading || isBannerLoading) return <Loader />;
 
-      if (isNetworkError) {
-        setTimeout(() => {
-          toast.error("🚫 Network error. Please check your connection.");
-        }, 100);
-      } else {
-        console.error("❗ Server Error:", foldersError.response?.status);
-      }
-    }
+  // Show error with retry
+  if (isFoldersError || isBannerError) {
+    const refetch = isFoldersError ? refetchFolders : refetchBanner;
+    return (
+      <ErrorFallback
+        message="Failed to load gallery. Please try again."
+        onRetry={refetch}
+        fullScreen={true}
+      />
+    );
   }
 
-  if (isFoldersLoading || isBannerLoading) return <Loader />;
+  const bannerImg = bannerData?.image || bannerData;
 
   // Stats data
   const statsData = [
@@ -101,7 +69,7 @@ const Gallery = () => {
         url={fullUrl}
       />
 
-      {/* Banner Section - Consistent with other pages */}
+      {/* Banner Section */}
       <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
@@ -212,23 +180,8 @@ const Gallery = () => {
             </p>
           </div>
 
-          {/* Error State */}
-          {isFoldersError && (
-            <div className="text-center py-20">
-              <div className="inline-block p-6 border border-white/10">
-                <FiImage className="text-yellow-400 text-4xl mx-auto mb-4" />
-                <h3 className="text-white text-xl mb-2">
-                  Failed to load gallery folders.
-                </h3>
-                <p className="text-white/40">
-                  Try refreshing the page or check your connection.
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Empty State */}
-          {!isFoldersError && (!folders || folders.length === 0) && (
+          {(!folders || folders.length === 0) && (
             <div className="text-center py-20">
               <div className="inline-block p-6 border border-white/10">
                 <FiImage className="text-yellow-400 text-4xl mx-auto mb-4" />
@@ -239,8 +192,8 @@ const Gallery = () => {
             </div>
           )}
 
-          {/* Gallery Grid - Same design as Mentor/Staff Grid */}
-          {!isFoldersError && folders && folders.length > 0 && (
+          {/* Gallery Grid */}
+          {folders && folders.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {folders.map((item, index) => (
                 <Link
@@ -251,9 +204,8 @@ const Gallery = () => {
                   className="group block"
                 >
                   <div className="group relative bg-gradient-to-b from-black to-black/95 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 overflow-hidden rounded-none h-full">
-                    {/* Image Container with Frame Effect */}
+                    {/* Image Container */}
                     <div className="relative overflow-hidden">
-                      {/* Inner Border Frame */}
                       <div className="absolute inset-2 border border-white/0 group-hover:border-yellow-400/30 transition-all duration-500 z-10 pointer-events-none" />
 
                       <div className="relative overflow-hidden aspect-[4/5]">
@@ -264,13 +216,10 @@ const Gallery = () => {
                           loading="lazy"
                         />
 
-                        {/* Diagonal Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500" />
 
-                        {/* Bottom Gradient Bar */}
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
-                        {/* Corner Elements */}
                         <div className="absolute top-0 left-0 w-12 h-12">
                           <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-yellow-400/0 group-hover:border-yellow-400/60 transition-all duration-500" />
                           <div className="absolute top-2 left-2 w-2 h-2 bg-yellow-400/0 group-hover:bg-yellow-400/40 rounded-full transition-all duration-500" />
@@ -280,7 +229,6 @@ const Gallery = () => {
                           <div className="absolute bottom-2 right-2 w-2 h-2 bg-yellow-400/0 group-hover:bg-yellow-400/40 rounded-full transition-all duration-500" />
                         </div>
 
-                        {/* Diagonal Line */}
                         <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                           <div className="absolute top-0 right-0 w-32 h-px bg-gradient-to-l from-yellow-400/50 to-transparent rotate-45 origin-top-right translate-x-8 -translate-y-8 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
                         </div>
@@ -299,10 +247,8 @@ const Gallery = () => {
 
                     {/* Content Area */}
                     <div className="p-5 relative">
-                      {/* Animated Underline */}
                       <div className="absolute top-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                      {/* Category Label */}
                       <div className="flex items-center gap-2 mb-3">
                         <div className="w-3 h-px bg-yellow-400/60 group-hover:w-6 transition-all duration-300" />
                         <span className="text-yellow-400/70 text-[10px] font-medium uppercase tracking-[0.2em] group-hover:text-yellow-400 transition-colors">
@@ -311,19 +257,16 @@ const Gallery = () => {
                         <div className="flex-1 h-px bg-gradient-to-r from-yellow-400/20 to-transparent" />
                       </div>
 
-                      {/* Folder Title */}
                       <h3 className="text-white font-bold text-lg leading-tight mb-2 group-hover:text-yellow-400 transition-colors duration-300 line-clamp-2">
                         {item.folderTitle}
                       </h3>
 
-                      {/* Divider with Dot */}
                       <div className="flex items-center gap-2 mt-4 mb-3">
                         <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
                         <div className="w-1 h-1 bg-yellow-400/40 rounded-full" />
                         <div className="h-px flex-1 bg-gradient-to-l from-white/10 to-transparent" />
                       </div>
 
-                      {/* View Button */}
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-white/30 text-[10px] uppercase tracking-wider">
                           View Album

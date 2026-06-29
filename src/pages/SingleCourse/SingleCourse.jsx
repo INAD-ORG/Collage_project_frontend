@@ -1,11 +1,5 @@
-import { baseUrl } from "../../main";
-import { toast } from "sonner";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import Loader from "../../components/Loader/Loader";
+// pages/SingleCourse.jsx
 import { useParams, Link } from "react-router-dom";
-import useFullUrl from "../../utils/useFullUrl";
-import SEO from "../../components/SEO/SEO";
 import {
   FiCheck,
   FiArrowLeft,
@@ -16,51 +10,36 @@ import {
   FiAward,
 } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
+import { useCourse } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
+import SEO from "../../components/SEO/SEO";
+import useFullUrl from "../../utils/useFullUrl";
 import Enquiry from "../../components/Sidebar/Sidebar";
-
-const fetchCourse = async ({ queryKey }) => {
-  const [, id] = queryKey;
-  if (!navigator.onLine) throw new Error("NETWORK_ERROR");
-  const { data } = await axios.get(`${baseUrl}/course/${id}`);
-  return data?.course;
-};
 
 const SingleCourse = () => {
   const fullUrl = useFullUrl();
   const { id } = useParams();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["courses", id],
-    queryFn: fetchCourse,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  // Using custom hook
+  const {
+    data: course,
+    isLoading,
+    isError,
+    refetch,
+  } = useCourse(id);
 
-  if (isError) {
-    if (error.name === "AxiosError") {
-      const isNetworkError =
-        !error.response || error.message.includes("ECONNRESET");
-      if (isNetworkError) {
-        setTimeout(
-          () => toast.error("🚫 Network error. Please check your connection."),
-          100,
-        );
-      }
-    }
-  }
-
+  // Show loader
   if (isLoading) return <Loader />;
 
+  // Show error with retry
   if (isError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <h3 className="text-white text-xl mb-2">Failed to load course.</h3>
-          <p className="text-white/40">
-            Try refreshing the page or check your connection.
-          </p>
-        </div>
-      </div>
+      <ErrorFallback
+        message="Failed to load course details. Please try again."
+        onRetry={refetch}
+        fullScreen={true}
+      />
     );
   }
 
@@ -80,7 +59,7 @@ const SingleCourse = () => {
     careerLists,
     overviewTitle,
     overviewDesc,
-  } = data;
+  } = course || {};
 
   const seoTitle = courseTitle
     ? `${courseTitle} | International Academy of Design`

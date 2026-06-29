@@ -1,10 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import Loader from "../../components/Loader/Loader";
-import { toast } from "sonner";
-import { baseUrl } from "../../main";
-import useFullUrl from "../../utils/useFullUrl";
-import SEO from "../../components/SEO/SEO";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import {
   FiUsers,
   FiAward,
@@ -13,82 +8,47 @@ import {
   FiMapPin,
 } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-
-const fetchStaffs = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(`${baseUrl}/staff/all-staffs`);
-  return data.staff;
-};
-
-const fetchBanner = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(
-    `${baseUrl}/banner/staff-banner/67e7723fc95a30104036fdc1`,
-  );
-  return data?.image;
-};
+import { useStaffs, useStaffBanner } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
+import SEO from "../../components/SEO/SEO";
+import useFullUrl from "../../utils/useFullUrl";
 
 const Staff = () => {
   const fullUrl = useFullUrl();
   const [expandedCard, setExpandedCard] = useState(null);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["staffs"],
-    queryFn: fetchStaffs,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  // Using custom hooks
+  const {
+    data: staffs = [],
+    isLoading: staffsLoading,
+    isError: staffsError,
+    refetch: refetchStaffs,
+  } = useStaffs();
 
   const {
-    data: bannerImg,
-    isLoading: isBannerLoading,
-    isError: isBannerError,
-  } = useQuery({
-    queryKey: ["mentorBanner"],
-    queryFn: fetchBanner,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+    data: bannerData,
+    isLoading: bannerLoading,
+    isError: bannerError,
+    refetch: refetchBanner,
+  } = useStaffBanner();
 
-  if (isError) {
-    if (error.name === "AxiosError") {
-      const isNetworkError =
-        !error.response ||
-        error.message.includes("ECONNRESET") ||
-        error.response?.data?.message === "read ECONNRESET";
+  // Show loader
+  if (staffsLoading || bannerLoading) return <Loader />;
 
-      if (isNetworkError) {
-        setTimeout(() => {
-          toast.error("🚫 Network error. Please check your connection.");
-        }, 100);
-      } else {
-        console.error("❗ Server Error:", error.response?.status);
-      }
-    }
-  }
-
-  if (isLoading || isBannerLoading) return <Loader />;
-
-  if (isError || isBannerError) {
+  // Show error with retry
+  if (staffsError || bannerError) {
+    const refetch = staffsError ? refetchStaffs : refetchBanner;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <h3 className="text-white text-xl mb-2">
-            Failed to load staff data.
-          </h3>
-          <p className="text-white/40">
-            Try refreshing the page or check your connection.
-          </p>
-        </div>
-      </div>
+      <ErrorFallback
+        message="Failed to load staff data. Please try again."
+        onRetry={refetch}
+        fullScreen={true}
+      />
     );
   }
+
+  const bannerImg = bannerData?.image || bannerData;
 
   // Stats data
   const statsData = [
@@ -105,7 +65,7 @@ const Staff = () => {
         url={fullUrl}
       />
 
-      {/* Banner Section - Consistent with Mentor Page */}
+      {/* Banner Section */}
       <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
@@ -237,18 +197,17 @@ const Staff = () => {
             </p>
           </div>
 
-          {/* Staff Grid - Same design as Mentor Grid */}
+          {/* Staff Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {data?.map((item, index) => (
+            {staffs?.map((item, index) => (
               <div
                 key={item._id}
                 className="group relative bg-gradient-to-b from-black to-black/95 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 overflow-hidden rounded-none"
                 onMouseEnter={() => setExpandedCard(item._id)}
                 onMouseLeave={() => setExpandedCard(null)}
               >
-                {/* Image Container with Frame Effect */}
+                {/* Image Container */}
                 <div className="relative overflow-hidden">
-                  {/* Inner Border Frame */}
                   <div className="absolute inset-2 border border-white/0 group-hover:border-yellow-400/30 transition-all duration-500 z-10 pointer-events-none" />
 
                   <div className="relative overflow-hidden aspect-[4/5]">
@@ -259,13 +218,9 @@ const Staff = () => {
                       loading="lazy"
                     />
 
-                    {/* Diagonal Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500" />
-
-                    {/* Bottom Gradient Bar */}
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
-                    {/* Corner Elements */}
                     <div className="absolute top-0 left-0 w-12 h-12">
                       <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-yellow-400/0 group-hover:border-yellow-400/60 transition-all duration-500" />
                       <div className="absolute top-2 left-2 w-2 h-2 bg-yellow-400/0 group-hover:bg-yellow-400/40 rounded-full transition-all duration-500" />
@@ -275,7 +230,6 @@ const Staff = () => {
                       <div className="absolute bottom-2 right-2 w-2 h-2 bg-yellow-400/0 group-hover:bg-yellow-400/40 rounded-full transition-all duration-500" />
                     </div>
 
-                    {/* Diagonal Line */}
                     <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="absolute top-0 right-0 w-32 h-px bg-gradient-to-l from-yellow-400/50 to-transparent rotate-45 origin-top-right translate-x-8 -translate-y-8 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
                     </div>
@@ -284,10 +238,8 @@ const Staff = () => {
 
                 {/* Content Area */}
                 <div className="p-5 relative">
-                  {/* Animated Underline */}
                   <div className="absolute top-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                  {/* Category Label */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-3 h-px bg-yellow-400/60 group-hover:w-6 transition-all duration-300" />
                     <span className="text-yellow-400/70 text-[10px] font-medium uppercase tracking-[0.2em] group-hover:text-yellow-400 transition-colors">
@@ -296,12 +248,10 @@ const Staff = () => {
                     <div className="flex-1 h-px bg-gradient-to-r from-yellow-400/20 to-transparent" />
                   </div>
 
-                  {/* Name */}
                   <h3 className="text-white font-bold text-xl leading-tight mb-1 group-hover:text-yellow-400 transition-colors duration-300">
                     {item.name}
                   </h3>
 
-                  {/* Position */}
                   <div className="flex items-center gap-2 mt-1">
                     <div className="w-4 h-[1px] bg-white/20 group-hover:bg-yellow-400/40 transition-colors duration-300" />
                     <p className="text-white/40 text-xs uppercase tracking-wider group-hover:text-white/60 transition-colors">
@@ -309,7 +259,6 @@ const Staff = () => {
                     </p>
                   </div>
 
-                  {/* Location with Icon */}
                   {item.location && (
                     <div className="flex items-center gap-2 mt-2">
                       <FiMapPin className="text-yellow-400/40 text-xs" />
@@ -319,7 +268,6 @@ const Staff = () => {
                     </div>
                   )}
 
-                  {/* Divider with Dot */}
                   <div className="flex items-center gap-2 mt-4 mb-3">
                     <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
                     <div className="w-1 h-1 bg-yellow-400/40 rounded-full" />
@@ -331,7 +279,7 @@ const Staff = () => {
           </div>
 
           {/* Empty State */}
-          {(!data || data.length === 0) && (
+          {(!staffs || staffs.length === 0) && (
             <div className="text-center py-20">
               <p className="text-white/40 text-lg">No staff members found.</p>
             </div>

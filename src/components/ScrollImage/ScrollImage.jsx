@@ -1,43 +1,26 @@
-import { baseUrl } from "../../main";
-import { toast } from "sonner";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useAffiliates } from "../../services/hook";
 import Loader from "../../components/Loader/Loader";
-
-const fetchAffiliate = async () => {
-  if (!navigator.onLine) throw new Error("NETWORK_ERROR");
-  const { data } = await axios.get(`${baseUrl}/affiliate/all-affiliates`);
-  return data.affiliated;
-};
+import ErrorFallback from "../../components/Error/ErrorFallback";
 
 const ScrollImage = () => {
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["Affiliate"],
-    queryFn: fetchAffiliate,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  const {
+    data: affiliates = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useAffiliates();
 
-  if (isError) {
-    if (error.name === "AxiosError") {
-      const isNetworkError =
-        !error.response || error.message.includes("ECONNRESET");
-      if (isNetworkError) {
-        setTimeout(
-          () => toast.error("Network error. Please check your connection."),
-          100,
-        );
-      }
-    }
-  }
-
+  // Show loader
   if (isLoading) return <Loader />;
 
+  // Show error with retry
   if (isError) {
     return (
-      <div className="min-h-[300px] flex items-center justify-center bg-white">
-        <p className="text-black/40">Failed to load Affiliates</p>
-      </div>
+      <ErrorFallback
+        message="Failed to load affiliates. Please try again."
+        onRetry={refetch}
+        fullScreen={false}
+      />
     );
   }
 
@@ -59,7 +42,7 @@ const ScrollImage = () => {
               </span>
               <span className="h-px w-6 sm:w-8 bg-yellow-400/50"></span>
               <span className="text-[10px] sm:text-xs text-black/20">
-                {data?.length || 0} Colleges
+                {affiliates?.length || 0} Colleges
               </span>
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-black tracking-tight leading-tight">
@@ -78,7 +61,7 @@ const ScrollImage = () => {
 
         {/* Pinterest-style Masonry Grid */}
         <div className="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-2 sm:gap-3 md:gap-4">
-          {data?.map((item, index) => {
+          {affiliates?.map((item, index) => {
             // Random height variations for masonry effect
             const heights = [
               "h-28",
@@ -121,11 +104,11 @@ const ScrollImage = () => {
         </div>
 
         {/* Bottom Row - Remaining partners count */}
-        {data?.length > 20 && (
+        {affiliates?.length > 20 && (
           <div className="text-center mt-8 sm:mt-10">
             <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 border border-black/10 text-xs sm:text-sm text-black/40">
               <span className="w-1 h-1 bg-yellow-400 rounded-full"></span>+
-              {data.length - 20} more partners
+              {affiliates.length - 20} more partners
             </div>
           </div>
         )}

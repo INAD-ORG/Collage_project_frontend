@@ -58,24 +58,13 @@ function App() {
 
   const queryClient = new QueryClient();
 
-  const shown = new Set();
-  const originalToastError = toast.error;
-
-  toast.error = (message, opts = {}) => {
-    const key = typeof message === "string" ? message : JSON.stringify(message);
-    if (shown.has(key)) return;
-    shown.add(key);
-    originalToastError(message, opts);
-    setTimeout(() => shown.delete(key), 2000);
-  };
-
   return (
     <div className="app">
       <QueryClientProvider client={queryClient}>
         <Float />
         <SocialFloat />
         <BrowserRouter>
-          <Toaster position="top-center" richColors />
+          <Toaster position="top-left" richColors />
           <ScrollToTop />
 
           <Navbar />

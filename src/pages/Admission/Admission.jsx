@@ -3,8 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import { baseUrl } from "../../main";
 import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
 import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
 import {
   FiSend,
   FiUser,
@@ -13,14 +13,7 @@ import {
   FiBookOpen,
   FiMapPin,
 } from "react-icons/fi";
-
-const fetchBanner = async () => {
-  if (!navigator.onLine) throw new Error("NETWORK_ERROR");
-  const { data } = await axios.get(
-    `${baseUrl}/banner/admission-banner/67e77282768539d1e12454a1`,
-  );
-  return data;
-};
+import { useAdmissionBanner } from "../../services/hook";
 
 const Admission = () => {
   const [formData, setFormData] = useState({
@@ -35,6 +28,28 @@ const Admission = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  // Using custom hook
+  const {
+    data: bannerData,
+    isLoading: bannerLoading,
+    isError: bannerError,
+    refetch: refetchBanner,
+  } = useAdmissionBanner();
+
+  // Show loader
+  if (bannerLoading) return <Loader />;
+
+  // Show error with retry
+  if (bannerError) {
+    return (
+      <ErrorFallback
+        message="Failed to load admission banner. Please try again."
+        onRetry={refetchBanner}
+        fullScreen={true}
+      />
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,19 +109,8 @@ const Admission = () => {
     }
   };
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["admission-banner"],
-    queryFn: fetchBanner,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
-
-  if (isLoading) return <Loader />;
-
-  // Demo banner image if API fails
-  const bannerImage = isError
-    ? "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920"
-    : data?.image;
+  const bannerImage = bannerData?.image || 
+    "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920";
 
   return (
     <div className="bg-white">

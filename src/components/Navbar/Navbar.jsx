@@ -1,11 +1,11 @@
+// components/Navbar.jsx
 import { Link, useLocation } from "react-router-dom";
 import { MdOutlineKeyboardArrowDown, MdClose, MdMenu } from "react-icons/md";
 import { useEffect, useState, useRef } from "react";
 import { RiHome2Line } from "react-icons/ri";
 import { aboutOption } from "../../assets/data";
-import { baseUrl } from "../../main";
-import axios from "axios";
 import logo from "../../assets/images/titlelogo.png";
+import { useCourses } from "../../services/hook";
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(false);
@@ -15,34 +15,17 @@ const Navbar = () => {
   const [navbarVisible, setNavbarVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  const [mainCourses, setMainCourses] = useState([]);
-  const [ugCourses, setUgCourses] = useState([]);
-  const [pgCourses, setPgCourses] = useState([]);
+  // Using custom hook
+  const { data: courses = [] } = useCourses();
+
+  // Filter courses
+  const mainCourses = courses.filter((course) => course.courseType === "Main Course");
+  const ugCourses = courses.filter((course) => course.courseType === "UG Course");
+  const pgCourses = courses.filter((course) => course.courseType === "PG Course");
 
   // Refs for dropdowns to detect clicks outside
   const aboutDropdownRef = useRef(null);
   const programsDropdownRef = useRef(null);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const { data } = await axios.get(`${baseUrl}/course/all-course`);
-        const allCourses = data?.courses || [];
-        setMainCourses(
-          allCourses.filter((course) => course.courseType === "Main Course"),
-        );
-        setUgCourses(
-          allCourses.filter((course) => course.courseType === "UG Course"),
-        );
-        setPgCourses(
-          allCourses.filter((course) => course.courseType === "PG Course"),
-        );
-      } catch (err) {
-        console.error("Error fetching courses:", err);
-      }
-    };
-    fetchCourses();
-  }, []);
 
   const location = useLocation();
 
@@ -53,14 +36,11 @@ const Navbar = () => {
 
       // Show/hide navbar based on scroll direction
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // Scrolling down - hide navbar
         setNavbarVisible(false);
       } else {
-        // Scrolling up - show navbar
         setNavbarVisible(true);
       }
 
-      // Update background opacity
       setScrolling(currentScrollY > 20);
       setLastScrollY(currentScrollY);
     };
@@ -72,13 +52,10 @@ const Navbar = () => {
 
   // Close all dropdowns and mobile menu on route change
   useEffect(() => {
-    // Close mobile menu
     setMobileMenuOpen(false);
-    // Close dropdowns
     setDropdown(false);
     setServiceDropdown(false);
 
-    // Close all details elements in mobile menu
     const openDetails = document.querySelectorAll(
       ".mobile-menu-container details[open]",
     );

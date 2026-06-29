@@ -1,94 +1,55 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import Loader from "../../components/Loader/Loader";
-import { toast } from "sonner";
-import { baseUrl } from "../../main";
-import useFullUrl from "../../utils/useFullUrl";
-import SEO from "../../components/SEO/SEO";
+// pages/Mentor.jsx
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import {
   FiUsers,
   FiAward,
   FiStar,
   FiArrowRight,
-  FiMail,
-  FiPhone,
   FiMapPin,
 } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-
-const fetchStaffs = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(`${baseUrl}/founder/all-founders`);
-  return data.founders;
-};
-
-const fetchBanner = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(
-    `${baseUrl}/banner/mentor-banner/67e7722bc95a30104036fdbe`,
-  );
-  return data?.image;
-};
+import { useFounders, useMentorBanner } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
+import SEO from "../../components/SEO/SEO";
+import useFullUrl from "../../utils/useFullUrl";
 
 const Mentor = () => {
   const fullUrl = useFullUrl();
   const [expandedCard, setExpandedCard] = useState(null);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["staff"],
-    queryFn: fetchStaffs,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  // Using custom hooks
+  const { 
+    data: founders = [], 
+    isLoading: foundersLoading, 
+    isError: foundersError,
+    refetch: refetchFounders 
+  } = useFounders();
 
-  const {
-    data: bannerImg,
-    isLoading: isBannerLoading,
-    isError: isBannerError,
-  } = useQuery({
-    queryKey: ["staffBanner"],
-    queryFn: fetchBanner,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  const { 
+    data: bannerData, 
+    isLoading: bannerLoading, 
+    isError: bannerError,
+    refetch: refetchBanner 
+  } = useMentorBanner();
 
-  if (isError) {
-    if (error.name === "AxiosError") {
-      const isNetworkError =
-        !error.response ||
-        error.message.includes("ECONNRESET") ||
-        error.response?.data?.message === "read ECONNRESET";
+  // Show loader
+  if (foundersLoading || bannerLoading) return <Loader />;
 
-      if (isNetworkError) {
-        setTimeout(() => {
-          toast.error("🚫 Network error. Please check your connection.");
-        }, 100);
-      } else {
-        console.error("❗ Server Error:", error.response?.status);
-      }
-    }
-  }
-
-  if (isLoading || isBannerLoading) return <Loader />;
-
-  if (isError || isBannerError) {
+  // Show error with retry
+  if (foundersError || bannerError) {
+    const refetch = foundersError ? refetchFounders : refetchBanner;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <h3 className="text-white text-xl mb-2">Failed to load data.</h3>
-          <p className="text-white/40">
-            Try refreshing the page or check your connection.
-          </p>
-        </div>
-      </div>
+      <ErrorFallback
+        message="Failed to load mentor data. Please try again."
+        onRetry={refetch}
+        fullScreen={true}
+      />
     );
   }
+
+  const bannerImg = bannerData?.image || bannerData;
 
   // Stats data
   const statsData = [
@@ -105,7 +66,7 @@ const Mentor = () => {
         url={fullUrl}
       />
 
-      {/* Banner Section - Consistent with HomeBanner */}
+      {/* Banner Section */}
       <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
@@ -160,7 +121,7 @@ const Mentor = () => {
                   </Link>
                 </div>
 
-                <div className="flex  sm:flex-wrap gap-8 mt-10 animate-fadeInUp animation-delay-600">
+                <div className="flex sm:flex-wrap gap-8 mt-10 animate-fadeInUp animation-delay-600">
                   {statsData.map((stat, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <span className="text-yellow-400 text-xl">
@@ -238,16 +199,15 @@ const Mentor = () => {
             </p>
           </div>
 
-          {/* Mentors Grid - Clean Modern Design */}
+          {/* Mentors Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {data?.map((item, index) => (
+            {founders?.map((item, index) => (
               <div
                 key={item._id}
                 className="group relative bg-gradient-to-b from-black to-black/95 border border-white/10 hover:border-yellow-400/40 transition-all duration-500 overflow-hidden rounded-none"
               >
-                {/* Image Container with Unique Frame Effect */}
+                {/* Image Container */}
                 <div className="relative overflow-hidden">
-                  {/* Inner Border Frame */}
                   <div className="absolute inset-2 border border-white/0 group-hover:border-yellow-400/30 transition-all duration-500 z-10 pointer-events-none" />
 
                   <div className="relative overflow-hidden aspect-[4/5]">
@@ -258,13 +218,9 @@ const Mentor = () => {
                       loading="lazy"
                     />
 
-                    {/* Unique Diagonal Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500" />
-
-                    {/* Bottom Gradient Bar */}
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
-                    {/* Unique Corner Elements - Abstract Design */}
                     <div className="absolute top-0 left-0 w-12 h-12">
                       <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-yellow-400/0 group-hover:border-yellow-400/60 transition-all duration-500" />
                       <div className="absolute top-2 left-2 w-2 h-2 bg-yellow-400/0 group-hover:bg-yellow-400/40 rounded-full transition-all duration-500" />
@@ -274,19 +230,16 @@ const Mentor = () => {
                       <div className="absolute bottom-2 right-2 w-2 h-2 bg-yellow-400/0 group-hover:bg-yellow-400/40 rounded-full transition-all duration-500" />
                     </div>
 
-                    {/* Unique Design Element - Diagonal Line */}
                     <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="absolute top-0 right-0 w-32 h-px bg-gradient-to-l from-yellow-400/50 to-transparent rotate-45 origin-top-right translate-x-8 -translate-y-8 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
                     </div>
                   </div>
                 </div>
 
-                {/* Content Area with Unique Typography */}
+                {/* Content Area */}
                 <div className="p-5 relative">
-                  {/* Animated Underline */}
                   <div className="absolute top-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                  {/* Category Label with Unique Style */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-3 h-px bg-yellow-400/60 group-hover:w-6 transition-all duration-300" />
                     <span className="text-yellow-400/70 text-[10px] font-medium uppercase tracking-[0.2em] group-hover:text-yellow-400 transition-colors">
@@ -295,12 +248,10 @@ const Mentor = () => {
                     <div className="flex-1 h-px bg-gradient-to-r from-yellow-400/20 to-transparent" />
                   </div>
 
-                  {/* Name with Unique Hover Effect */}
                   <h3 className="text-white font-bold text-xl leading-tight mb-1 group-hover:text-yellow-400 transition-colors duration-300">
                     {item.name}
                   </h3>
 
-                  {/* Position with Decorative Element */}
                   <div className="flex items-center gap-2 mt-1">
                     <div className="w-4 h-[1px] bg-white/20 group-hover:bg-yellow-400/40 transition-colors duration-300" />
                     <p className="text-white/40 text-xs uppercase tracking-wider group-hover:text-white/60 transition-colors">
@@ -308,7 +259,6 @@ const Mentor = () => {
                     </p>
                   </div>
 
-                  {/* Unique Divider with Dot */}
                   <div className="flex items-center gap-2 mt-4 mb-3">
                     <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
                     <div className="w-1 h-1 bg-yellow-400/40 rounded-full" />
@@ -320,7 +270,7 @@ const Mentor = () => {
           </div>
 
           {/* Empty State */}
-          {(!data || data.length === 0) && (
+          {(!founders || founders.length === 0) && (
             <div className="text-center py-20">
               <p className="text-white/40 text-lg">No mentors found.</p>
             </div>
@@ -328,7 +278,7 @@ const Mentor = () => {
         </div>
       </div>
 
-      {/* Why Our Mentors Section - Consistent with ChooseUs */}
+      {/* Why Our Mentors Section */}
       <div className="relative bg-black py-16 sm:py-20 border-t border-white/5 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">

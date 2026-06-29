@@ -1,100 +1,69 @@
-import { useState } from "react";
-import { baseUrl } from "../../main";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import Loader from "../../components/Loader/Loader";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import useFullUrl from "../../utils/useFullUrl";
-import SEO from "../../components/SEO/SEO";
-import { toast } from "sonner";
 import { FiArrowLeft, FiX, FiImage, FiGrid, FiZoomIn } from "react-icons/fi";
 import { MdArrowForward } from "react-icons/md";
-
-const fetchGallery = async (id) => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(`${baseUrl}/gallery-folder/${id}`);
-  return data.folder;
-};
-
-const fetchBanner = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(
-    `${baseUrl}/banner/gallery-banner/67e772a7768539d1e12454a4`,
-  );
-  return data?.image;
-};
+import { useGalleryFolder, useGalleryBanner } from "../../services/hook";
+import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
+import SEO from "../../components/SEO/SEO";
+import useFullUrl from "../../utils/useFullUrl";
 
 const SingleGallery = () => {
   const fullUrl = useFullUrl();
+  const { id } = useParams();
   const [selectedImg, setSelectedImg] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { id } = useParams();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["gallery", id],
-    queryFn: () => fetchGallery(id),
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  // Using custom hooks
+  const {
+    data: gallery,
+    isLoading: galleryLoading,
+    isError: galleryError,
+    refetch: refetchGallery,
+  } = useGalleryFolder(id);
 
   const {
-    data: bannerImg,
-    isLoading: isBannerLoading,
-    isError: isBannerError,
-  } = useQuery({
-    queryKey: ["folderBanner"],
-    queryFn: fetchBanner,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+    data: bannerData,
+    isLoading: bannerLoading,
+    isError: bannerError,
+    refetch: refetchBanner,
+  } = useGalleryBanner();
 
-  if (isError) {
-    if (error.name === "AxiosError") {
-      const isNetworkError =
-        !error.response ||
-        error.message.includes("ECONNRESET") ||
-        error.response?.data?.message === "read ECONNRESET";
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "Escape") closeModal();
+    };
 
-      if (isNetworkError) {
-        setTimeout(() => {
-          toast.error("🚫 Network error. Please check your connection.");
-        }, 100);
-      } else {
-        console.error("❗ Server Error:", error.response?.status);
-      }
+    if (selectedImg) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
     }
-  }
 
-  if (isLoading || isBannerLoading) return <Loader />;
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedImg, currentIndex]);
 
-  if (isError || isBannerError) {
+  // Show loader
+  if (galleryLoading || bannerLoading) return <Loader />;
+
+  // Show error with retry
+  if (galleryError || bannerError) {
+    const refetch = galleryError ? refetchGallery : refetchBanner;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <h3 className="text-white text-xl mb-2">Failed to load gallery</h3>
-          <p className="text-white/40">
-            Try refreshing the page or check your connection.
-          </p>
-        </div>
-      </div>
+      <ErrorFallback
+        message="Failed to load gallery. Please try again."
+        onRetry={refetch}
+        fullScreen={true}
+      />
     );
   }
 
-  const seoTitle = data?.folderTitle
-    ? `${data.folderTitle} | Gallery | International Academy of Design`
-    : "Gallery | International Academy of Design – Campus, Events & Student Life";
-
-  const seoDescription = data?.folderTitle
-    ? `Explore the vibrant "${data.folderTitle}" gallery at International Academy of Design. See photos of campus, student life, events, and creative projects.`
-    : "Explore the vibrant life at International Academy of Design through our gallery. See photos from our campus, classrooms, creative events, student projects, and cultural celebrations.";
-
-  const seoKeywords = data?.folderTitle
-    ? `${data.folderTitle.toLowerCase()}, international academy of design, gallery, campus life, student events, design projects`
-    : "international academy of design gallery, student events, campus photos, design institute gallery, creative work, classroom snapshots, design projects";
+  const bannerImg = bannerData?.image || bannerData;
 
   const openModal = (imageUrl, index) => {
     setSelectedImg(imageUrl);
@@ -106,34 +75,46 @@ const SingleGallery = () => {
   };
 
   const nextImage = () => {
-    if (data?.galleryImages && currentIndex < data.galleryImages.length - 1) {
+    if (
+      gallery?.galleryImages &&
+      currentIndex < gallery.galleryImages.length - 1
+    ) {
       setCurrentIndex(currentIndex + 1);
-      setSelectedImg(data.galleryImages[currentIndex + 1].imageUrl);
+      setSelectedImg(gallery.galleryImages[currentIndex + 1].imageUrl);
     }
   };
 
   const prevImage = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setSelectedImg(data.galleryImages[currentIndex - 1].imageUrl);
+      setSelectedImg(gallery.galleryImages[currentIndex - 1].imageUrl);
     }
   };
 
-  // Handle keyboard navigation
-  const handleKeyDown = (e) => {
-    if (e.key === "ArrowRight") nextImage();
-    if (e.key === "ArrowLeft") prevImage();
-    if (e.key === "Escape") closeModal();
-  };
+  const seoTitle = gallery?.folderTitle
+    ? `${gallery.folderTitle} | Gallery | International Academy of Design`
+    : "Gallery | International Academy of Design – Campus, Events & Student Life";
+
+  const seoDescription = gallery?.folderTitle
+    ? `Explore the vibrant "${gallery.folderTitle}" gallery at International Academy of Design. See photos of campus, student life, events, and creative projects.`
+    : "Explore the vibrant life at International Academy of Design through our gallery. See photos from our campus, classrooms, creative events, student projects, and cultural celebrations.";
+
+  const seoKeywords = gallery?.folderTitle
+    ? `${gallery.folderTitle.toLowerCase()}, international academy of design, gallery, campus life, student events, design projects`
+    : "international academy of design gallery, student events, campus photos, design institute gallery, creative work, classroom snapshots, design projects";
 
   // Stats data
   const statsData = [
     {
       icon: <FiImage />,
       label: "Total Photos",
-      value: data?.galleryImages?.length || "0",
+      value: gallery?.galleryImages?.length || "0",
     },
-    { icon: <FiGrid />, label: "Album", value: data?.folderTitle || "Gallery" },
+    {
+      icon: <FiGrid />,
+      label: "Album",
+      value: gallery?.folderTitle || "Gallery",
+    },
   ];
 
   return (
@@ -145,7 +126,7 @@ const SingleGallery = () => {
         url={fullUrl}
       />
 
-      {/* Banner Section - Consistent with other pages */}
+      {/* Banner Section */}
       <div className="relative w-full h-[50vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
@@ -153,7 +134,7 @@ const SingleGallery = () => {
               bannerImg ||
               "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920"
             }
-            alt={data?.folderTitle || "Gallery Banner"}
+            alt={gallery?.folderTitle || "Gallery Banner"}
             className="absolute inset-0 w-full h-full object-cover animate-slow-zoom"
             loading="lazy"
           />
@@ -187,7 +168,7 @@ const SingleGallery = () => {
 
                 {/* Title */}
                 <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-6 leading-[1.2] animate-fadeInUp">
-                  {data?.folderTitle || "Gallery"}
+                  {gallery?.folderTitle || "Gallery"}
                 </h1>
 
                 {/* Stats */}
@@ -214,7 +195,7 @@ const SingleGallery = () => {
         </div>
       </div>
 
-      {/* Gallery Grid Section - Pinterest Style Masonry */}
+      {/* Gallery Grid Section */}
       <div className="relative bg-black py-16 sm:py-20 lg:py-28 overflow-hidden">
         {/* Abstract Background */}
         <div className="absolute inset-0 pointer-events-none">
@@ -235,7 +216,6 @@ const SingleGallery = () => {
           <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-          {/* Grid pattern overlay */}
           <div className="absolute inset-0 opacity-[0.02]">
             <div
               className="absolute inset-0"
@@ -267,13 +247,21 @@ const SingleGallery = () => {
             </p>
           </div>
 
-          {/* Pinterest Style Masonry Grid */}
-          {data?.galleryImages && data.galleryImages.length > 0 ? (
+          {/* Empty State */}
+          {!gallery?.galleryImages || gallery.galleryImages.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="inline-block p-6 border border-white/10">
+                <FiImage className="text-yellow-400 text-4xl mx-auto mb-4" />
+                <p className="text-white/40 text-lg">
+                  No images found in this album.
+                </p>
+              </div>
+            </div>
+          ) : (
             <>
               {/* Desktop: Multi-column Masonry */}
               <div className="hidden md:block columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
-                {data.galleryImages.map((item, index) => {
-                  // Random height classes for Pinterest style effect
+                {gallery.galleryImages.map((item, index) => {
                   const heightClasses = [
                     "mb-4 break-inside-avoid",
                     "mb-4 break-inside-avoid",
@@ -298,7 +286,6 @@ const SingleGallery = () => {
                           loading="lazy"
                         />
 
-                        {/* Overlay on hover */}
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-10 h-10 border border-yellow-400/50 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
@@ -310,7 +297,6 @@ const SingleGallery = () => {
                           </div>
                         </div>
 
-                        {/* Corner Elements */}
                         <div className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                           <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-yellow-400/60" />
                         </div>
@@ -318,7 +304,6 @@ const SingleGallery = () => {
                           <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-yellow-400/60" />
                         </div>
 
-                        {/* Image Number */}
                         <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                           <span className="text-white/70 text-[10px]">
                             {String(index + 1).padStart(2, "0")}
@@ -330,10 +315,10 @@ const SingleGallery = () => {
                 })}
               </div>
 
-              {/* Mobile: Regular Grid with object-contain */}
+              {/* Mobile: Regular Grid */}
               <div className="block md:hidden">
                 <div className="grid grid-cols-2 gap-3">
-                  {data.galleryImages.map((item, index) => (
+                  {gallery.galleryImages.map((item, index) => (
                     <div
                       key={index}
                       className="group relative overflow-hidden cursor-pointer"
@@ -347,7 +332,6 @@ const SingleGallery = () => {
                           loading="lazy"
                         />
 
-                        {/* Overlay on hover */}
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-8 h-8 border border-yellow-400/50 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
@@ -359,7 +343,6 @@ const SingleGallery = () => {
                           </div>
                         </div>
 
-                        {/* Image Number */}
                         <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                           <span className="text-white/70 text-[8px]">
                             {String(index + 1).padStart(2, "0")}
@@ -371,15 +354,6 @@ const SingleGallery = () => {
                 </div>
               </div>
             </>
-          ) : (
-            <div className="text-center py-20">
-              <div className="inline-block p-6 border border-white/10">
-                <FiImage className="text-yellow-400 text-4xl mx-auto mb-4" />
-                <p className="text-white/40 text-lg">
-                  No images found in this album.
-                </p>
-              </div>
-            </div>
           )}
         </div>
       </div>
@@ -389,7 +363,6 @@ const SingleGallery = () => {
         <div
           className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg flex items-center justify-center p-4"
           onClick={closeModal}
-          onKeyDown={handleKeyDown}
           tabIndex={0}
         >
           {/* Close Button */}
@@ -401,7 +374,7 @@ const SingleGallery = () => {
           </button>
 
           {/* Navigation Buttons */}
-          {data?.galleryImages && data.galleryImages.length > 1 && (
+          {gallery?.galleryImages && gallery.galleryImages.length > 1 && (
             <>
               <button
                 onClick={(e) => {
@@ -451,7 +424,7 @@ const SingleGallery = () => {
           {/* Image Counter */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm px-4 py-2 z-10">
             <span className="text-white/70 text-xs">
-              {currentIndex + 1} / {data?.galleryImages?.length || 0}
+              {currentIndex + 1} / {gallery?.galleryImages?.length || 0}
             </span>
           </div>
 

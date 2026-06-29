@@ -5,45 +5,34 @@ import { FaLocationDot } from "react-icons/fa6";
 import { MdEmail, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { baseUrl } from "../../main";
 import { toast } from "sonner";
-import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
+import { useCourses, useContactDetails } from "../../services/hook";
 
 const Footer = () => {
   const [footerOption1, setFooterOption1] = useState(false);
   const [footerOption2, setFooterOption2] = useState(false);
   const location = useLocation();
 
+  // Using custom hooks
+  const { data: courses = [] } = useCourses();
+  const { data: contactDetailData = {} } = useContactDetails();
+
+  // Filter courses
+  const mainCourses = courses.filter(
+    (course) => course.courseType === "Main Course",
+  );
+  const ugCourses = courses.filter(
+    (course) => course.courseType === "UG Course",
+  );
+  const pgCourses = courses.filter(
+    (course) => course.courseType === "PG Course",
+  );
+
   useEffect(() => {
     setFooterOption1(false);
     setFooterOption2(false);
   }, [location]);
-
-  const [mainCourses, setMainCourses] = useState([]);
-  const [ugCourses, setUgCourses] = useState([]);
-  const [pgCourses, setPgCourses] = useState([]);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const { data } = await axios.get(`${baseUrl}/course/all-course`);
-        const allCourses = data?.courses || [];
-        setMainCourses(
-          allCourses.filter((course) => course.courseType === "Main Course"),
-        );
-        setUgCourses(
-          allCourses.filter((course) => course.courseType === "UG Course"),
-        );
-        setPgCourses(
-          allCourses.filter((course) => course.courseType === "PG Course"),
-        );
-      } catch (err) {
-        console.error("Error fetching courses:", err);
-      }
-    };
-    fetchCourses();
-  }, []);
 
   const handleGetDirections = () => {
     if (navigator.geolocation) {
@@ -64,22 +53,6 @@ const Footer = () => {
       toast.error("Geolocation not supported on this browser.");
     }
   };
-
-  const [contactDetailData, setContactDetailData] = useState({});
-
-  useEffect(() => {
-    const fetchContactDetails = async () => {
-      try {
-        const { data } = await axios.get(`${baseUrl}/contact-details/only`);
-        if (data && data?.success) {
-          setContactDetailData(data.contact);
-        }
-      } catch (error) {
-        console.error("Error fetching contact details:", error);
-      }
-    };
-    fetchContactDetails();
-  }, []);
 
   return (
     <footer className="relative bg-black pt-16 sm:pt-20 lg:pt-24 overflow-hidden">

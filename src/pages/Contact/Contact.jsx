@@ -1,85 +1,75 @@
 import {
   MdOutlineLocationOn,
   MdOutlineEmail,
-  MdPhone,
   MdArrowForward,
 } from "react-icons/md";
 import { LuPhoneCall } from "react-icons/lu";
 import {
   FaFacebookSquare,
-  FaInstagram,
   FaTwitter,
   FaLinkedin,
   FaArrowRight,
 } from "react-icons/fa";
 import { RiInstagramFill } from "react-icons/ri";
-import {
-  FiMapPin,
-  FiMail,
-  FiPhone,
-  FiSend,
-  FiCheckCircle,
-} from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { baseUrl } from "../../main";
-import { useQuery } from "@tanstack/react-query";
 import Loader from "../../components/Loader/Loader";
+import ErrorFallback from "../../components/Error/ErrorFallback";
 import useFullUrl from "../../utils/useFullUrl";
 import SEO from "../../components/SEO/SEO";
 import { Link } from "react-router-dom";
-
-const fetchBanner = async () => {
-  if (!navigator.onLine) {
-    throw new Error("NETWORK_ERROR");
-  }
-  const { data } = await axios.get(
-    `${baseUrl}/banner/contact-banner/67e772d0768539d1e12454a7`,
-  );
-  return data;
-};
+import { useContactBanner, useContactDetails } from "../../services/hook";
+import { FiAward, FiStar, FiUsers } from "react-icons/fi";
 
 const Contact = () => {
   const fullUrl = useFullUrl();
-  const [contactDetailData, setContactDetailData] = useState({});
-
-  useEffect(() => {
-    const fetchContactDetails = async () => {
-      try {
-        const { data } = await axios.get(`${baseUrl}/contact-details/only`);
-        if (data && data?.success) {
-          setContactDetailData(data.contact);
-        }
-      } catch (error) {
-        console.error("Error fetching contact details:", error);
-        toast.error(
-          error.response?.data?.message || "Failed to load contact details",
-        );
-      }
-    };
-    fetchContactDetails();
-  }, []);
-
-  const wordLimit = 150;
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phoneNumber: "",
     message: "",
   });
-
   const [loading, setLoading] = useState(false);
+  const wordLimit = 150;
+
+  // Using custom hooks
+  const {
+    data: bannerData,
+    isLoading: bannerLoading,
+    isError: bannerError,
+    refetch: refetchBanner,
+  } = useContactBanner();
+
+  const {
+    data: contactDetailData = {},
+    isLoading: detailsLoading,
+    isError: detailsError,
+    refetch: refetchDetails,
+  } = useContactDetails();
+
+  // Show loader
+  if (bannerLoading || detailsLoading) return <Loader />;
+
+  // Show error with retry
+  if (bannerError || detailsError) {
+    const refetch = bannerError ? refetchBanner : refetchDetails;
+    return (
+      <ErrorFallback
+        message="Failed to load contact information. Please try again."
+        onRetry={refetch}
+        fullScreen={true}
+      />
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "message") {
       const words = value.split(/\s+/).filter((word) => word !== "");
       if (words.length > wordLimit) return;
     }
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -88,19 +78,16 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { name, email, phoneNumber, message } = formData;
-
     if (!name || !email || !phoneNumber || !message) {
       toast.error("All fields are required!");
       return;
     }
-
     try {
       setLoading(true);
       const { data } = await axios.post(
         `${baseUrl}/contact/new-contact`,
-        formData,
+        formData
       );
       if (data.result === 1) {
         toast.success("Message sent successfully!");
@@ -119,45 +106,6 @@ const Contact = () => {
     }
   };
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["contact-banner"],
-    queryFn: fetchBanner,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
-
-  if (isError) {
-    if (error.name === "AxiosError") {
-      const isNetworkError =
-        !error.response ||
-        error.message.includes("ECONNRESET") ||
-        error.response?.data?.message === "read ECONNRESET";
-
-      if (isNetworkError) {
-        setTimeout(() => {
-          toast.error("🚫 Network error. Please check your connection.");
-        }, 100);
-      }
-    }
-  }
-
-  if (isLoading) return <Loader />;
-
-  if (isError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <h3 className="text-white text-xl mb-2">
-            Failed to load contact banner
-          </h3>
-          <p className="text-white/40">
-            Try refreshing the page or check your connection.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const handleGetDirections = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -171,19 +119,20 @@ const Contact = () => {
         },
         () => {
           toast.error("Please allow location access to get directions.");
-        },
+        }
       );
     } else {
       toast.error("Geolocation not supported on this browser.");
     }
   };
 
-  // Stats data
-  const statsData = [
-    { label: "Happy Students", value: "5000+" },
-    { label: "Years Experience", value: "18+" },
-    { label: "Expert Faculty", value: "50+" },
-  ];
+  
+    // Stats data
+    const statsData = [
+      { icon: <FiUsers />, label: "Students", value: "10000+" },
+      { icon: <FiAward />, label: "Awards", value: "50+" },
+      { icon: <FiStar />, label: "Rating", value: "4.9" },
+    ];
 
   return (
     <div className="contact bg-black">
@@ -194,12 +143,12 @@ const Contact = () => {
         url={fullUrl}
       />
 
-      {/* Banner Section - Consistent with other pages */}
+      {/* Banner Section */}
       <div className="relative w-full h-[50vh] min-h-[500px] overflow-hidden">
         <div className="relative w-full h-full bg-black">
           <img
             src={
-              data?.image ||
+              bannerData?.image ||
               "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920"
             }
             alt="Contact Banner"
@@ -227,11 +176,12 @@ const Contact = () => {
                 <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-[1.1] animate-fadeInUp">
                   Contact <span className="text-yellow-400">Us</span>
                 </h1>
-
-                {/* Stats */}
-                <div className="flex flex-wrap gap-8 mt-8 animate-fadeInUp animation-delay-400">
+ <div className="flex gap-8 mt-10 animate-fadeInUp animation-delay-600">
                   {statsData.map((stat, i) => (
                     <div key={i} className="flex items-center gap-3">
+                      <span className="text-yellow-400 text-xl">
+                        {stat.icon}
+                      </span>
                       <div>
                         <div className="text-white font-bold text-lg">
                           {stat.value}
