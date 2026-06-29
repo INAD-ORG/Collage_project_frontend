@@ -1,4 +1,3 @@
-// components/Navbar.jsx
 import { Link, useLocation } from "react-router-dom";
 import { MdOutlineKeyboardArrowDown, MdClose, MdMenu } from "react-icons/md";
 import { useEffect, useState, useRef } from "react";
