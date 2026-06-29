@@ -64,7 +64,7 @@ function App() {
         <Float />
         <SocialFloat />
         <BrowserRouter>
-          <Toaster position="top-left" richColors />
+          <Toaster position="top-center" richColors />
           <ScrollToTop />
 
           <Navbar />
